@@ -11,4 +11,8 @@
     <Folder Include="Pages\MilkTea\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PRN222.Assignment.Services\PRN222.Assignment.Services.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PRN222.Assignment.Services\PRN222.Assignment.Services.csproj" />
+  </ItemGroup>
+
 </Project>
