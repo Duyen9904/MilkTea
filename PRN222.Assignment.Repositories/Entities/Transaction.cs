@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PRN222.Assignment.Repositories.Models;
+namespace PRN222.Assignment.Repositories.Entities;
 
 public partial class Transaction
 {
@@ -20,10 +20,4 @@ public partial class Transaction
     public DateTime TransactionDate { get; set; }
 
     public int? ProcessedBy { get; set; }
-
-    public virtual Account Account { get; set; } = null!;
-
-    public virtual Order? Order { get; set; }
-
-    public virtual Account? ProcessedByNavigation { get; set; }
 }

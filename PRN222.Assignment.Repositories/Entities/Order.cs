@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PRN222.Assignment.Repositories.Models;
+namespace PRN222.Assignment.Repositories.Entities;
 
 public partial class Order
 {
@@ -33,9 +33,9 @@ public partial class Order
 
     public virtual Account Account { get; set; } = null!;
 
+    public virtual ICollection<OrderCombo> OrderCombos { get; set; } = new List<OrderCombo>();
+
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual Account? ProcessedByNavigation { get; set; }
-
-    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

@@ -1,4 +1,4 @@
-﻿using PRN222.Assignment.Repositories.Models;
+﻿using PRN222.Assignment.Repositories.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,10 @@ namespace PRN222.Assignment.Repositories.Repositories.Interface
         IGenericRepository<Size> Sizes { get; }
         IGenericRepository<OrderItemTopping> OrderItemsToppings { get; }
         IGenericRepository<ProductSize> ProductSizes { get; }
+        IGenericRepository<Combo> Combos { get; }
+        IGenericRepository<ComboItem> ComboItems { get; }
+        IGenericRepository<OrderCombo> OrderCombos { get; }
+
         IGenericRepository<Transaction> Transactions { get; }
         Task<int> SaveAsync();
     }

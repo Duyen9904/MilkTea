@@ -115,14 +115,49 @@ CREATE TABLE [OrderItemTopping] (
     CONSTRAINT [UQ_OrderItemTopping] UNIQUE ([order_item_id], [topping_id])
 );
 
--- Transaction History
+
+
+-- Transaction History (Self-contained, no foreign keys)
 CREATE TABLE [Transaction] (
     [transaction_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [account_id] INT NOT NULL FOREIGN KEY REFERENCES [Account]([account_id]),
+    [account_id] INT NOT NULL, -- Store as plain integer, no FK
     [amount] MONEY NOT NULL,
     [transaction_type] NVARCHAR(20) NOT NULL CHECK ([transaction_type] IN ('Payment', 'Refund', 'Adjustment', 'Deposit')),
     [description] NVARCHAR(255) NULL,
-    [order_id] INT NULL FOREIGN KEY REFERENCES [Order]([order_id]),
-    [transaction_date] DATETIME DEFAULT GETDATE() NOT NULL,
-    [processed_by] INT NULL FOREIGN KEY REFERENCES [Account]([account_id])
+    [order_id] INT NULL, -- Store as plain integer, no FK
+    [transaction_date] DATETIME NOT NULL DEFAULT GETDATE(),
+    [processed_by] INT NULL -- Store as plain integer, no FK
+);
+
+
+
+
+-- Combo Table
+CREATE TABLE [Combo] (
+    [combo_id] INT IDENTITY(1,1) PRIMARY KEY,
+    [combo_name] NVARCHAR(100) NOT NULL,
+    [description] NVARCHAR(500) NULL,
+    [total_price] MONEY NOT NULL,
+    [image_path] NVARCHAR(255) NULL,
+    [is_available] BIT DEFAULT 1 NOT NULL,
+    [created_at] DATETIME2(6) DEFAULT GETDATE() NOT NULL
+);
+
+-- Combo Items (linking to ProductSize instead of Product + Size separately)
+CREATE TABLE [ComboItem] (
+    [combo_item_id] INT IDENTITY(1,1) PRIMARY KEY,
+    [combo_id] INT NOT NULL FOREIGN KEY REFERENCES [Combo]([combo_id]),
+    [product_size_id] INT NOT NULL FOREIGN KEY REFERENCES [ProductSize]([product_size_id]),
+    [quantity] INT DEFAULT 1 NOT NULL,
+    CONSTRAINT [UQ_ComboItem] UNIQUE ([combo_id], [product_size_id])
+);
+
+-- Order Combos (Combos included in orders)
+CREATE TABLE [OrderCombo] (
+    [order_combo_id] INT IDENTITY(1,1) PRIMARY KEY,
+    [order_id] INT NOT NULL FOREIGN KEY REFERENCES [Order]([order_id]),
+    [combo_id] INT NOT NULL FOREIGN KEY REFERENCES [Combo]([combo_id]),
+    [quantity] INT DEFAULT 1 NOT NULL,
+    [unit_price] MONEY NOT NULL,
+    CONSTRAINT [UQ_OrderCombo] UNIQUE ([order_id], [combo_id])
 );

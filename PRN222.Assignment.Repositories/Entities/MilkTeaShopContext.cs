@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
-namespace PRN222.Assignment.Repositories.Models;
+namespace PRN222.Assignment.Repositories.Entities;
 
 public partial class MilkTeaShopContext : DbContext
 {
@@ -20,9 +19,15 @@ public partial class MilkTeaShopContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<Combo> Combos { get; set; }
+
+    public virtual DbSet<ComboItem> ComboItems { get; set; }
+
     public virtual DbSet<MilkTeaProduct> MilkTeaProducts { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
+
+    public virtual DbSet<OrderCombo> OrderCombos { get; set; }
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
 
@@ -36,24 +41,15 @@ public partial class MilkTeaShopContext : DbContext
 
     public virtual DbSet<Transaction> Transactions { get; set; }
 
-    private string GetConnectionString()
-    {
-        IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, true).Build();
-        return configuration["ConnectionStrings:DefaultConnection"];
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer(GetConnectionString());
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=localhost;database=MilkTeaShop;TrustServerCertificate=True;Trusted_Connection=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Account__46A222CD3CB0F091");
+            entity.HasKey(e => e.AccountId).HasName("PK__Account__46A222CD7B95EBE3");
 
             entity.ToTable("Account");
 
@@ -96,7 +92,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Category__D54EE9B449C0D9B1");
+            entity.HasKey(e => e.CategoryId).HasName("PK__Category__D54EE9B43269DD98");
 
             entity.ToTable("Category");
 
@@ -109,9 +105,63 @@ public partial class MilkTeaShopContext : DbContext
                 .HasColumnName("description");
         });
 
+        modelBuilder.Entity<Combo>(entity =>
+        {
+            entity.HasKey(e => e.ComboId).HasName("PK__Combo__18F74AA3C0EEC8EB");
+
+            entity.ToTable("Combo");
+
+            entity.Property(e => e.ComboId).HasColumnName("combo_id");
+            entity.Property(e => e.ComboName)
+                .HasMaxLength(100)
+                .HasColumnName("combo_name");
+            entity.Property(e => e.CreatedAt)
+                .HasPrecision(6)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .HasColumnName("description");
+            entity.Property(e => e.ImagePath)
+                .HasMaxLength(255)
+                .HasColumnName("image_path");
+            entity.Property(e => e.IsAvailable)
+                .HasDefaultValue(true)
+                .HasColumnName("is_available");
+            entity.Property(e => e.TotalPrice)
+                .HasColumnType("money")
+                .HasColumnName("total_price");
+        });
+
+        modelBuilder.Entity<ComboItem>(entity =>
+        {
+            entity.HasKey(e => e.ComboItemId).HasName("PK__ComboIte__A1CBC08751C5BBAF");
+
+            entity.ToTable("ComboItem");
+
+            entity.HasIndex(e => new { e.ComboId, e.ProductSizeId }, "UQ_ComboItem").IsUnique();
+
+            entity.Property(e => e.ComboItemId).HasColumnName("combo_item_id");
+            entity.Property(e => e.ComboId).HasColumnName("combo_id");
+            entity.Property(e => e.ProductSizeId).HasColumnName("product_size_id");
+            entity.Property(e => e.Quantity)
+                .HasDefaultValue(1)
+                .HasColumnName("quantity");
+
+            entity.HasOne(d => d.Combo).WithMany(p => p.ComboItems)
+                .HasForeignKey(d => d.ComboId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ComboItem__combo__6C190EBB");
+
+            entity.HasOne(d => d.ProductSize).WithMany(p => p.ComboItems)
+                .HasForeignKey(d => d.ProductSizeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ComboItem__produ__6D0D32F4");
+        });
+
         modelBuilder.Entity<MilkTeaProduct>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__MilkTeaP__47027DF5779E9AD8");
+            entity.HasKey(e => e.ProductId).HasName("PK__MilkTeaP__47027DF53B0F8AEC");
 
             entity.ToTable("MilkTeaProduct");
 
@@ -149,7 +199,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Order__465962297029A399");
+            entity.HasKey(e => e.OrderId).HasName("PK__Order__465962292F632D87");
 
             entity.ToTable("Order");
 
@@ -200,9 +250,38 @@ public partial class MilkTeaShopContext : DbContext
                 .HasConstraintName("FK__Order__processed__571DF1D5");
         });
 
+        modelBuilder.Entity<OrderCombo>(entity =>
+        {
+            entity.HasKey(e => e.OrderComboId).HasName("PK__OrderCom__34BF1CD7F5E9113D");
+
+            entity.ToTable("OrderCombo");
+
+            entity.HasIndex(e => new { e.OrderId, e.ComboId }, "UQ_OrderCombo").IsUnique();
+
+            entity.Property(e => e.OrderComboId).HasColumnName("order_combo_id");
+            entity.Property(e => e.ComboId).HasColumnName("combo_id");
+            entity.Property(e => e.OrderId).HasColumnName("order_id");
+            entity.Property(e => e.Quantity)
+                .HasDefaultValue(1)
+                .HasColumnName("quantity");
+            entity.Property(e => e.UnitPrice)
+                .HasColumnType("money")
+                .HasColumnName("unit_price");
+
+            entity.HasOne(d => d.Combo).WithMany(p => p.OrderCombos)
+                .HasForeignKey(d => d.ComboId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__OrderComb__combo__72C60C4A");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderCombos)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__OrderComb__order__71D1E811");
+        });
+
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(e => e.OrderItemId).HasName("PK__OrderIte__3764B6BC43F2626A");
+            entity.HasKey(e => e.OrderItemId).HasName("PK__OrderIte__3764B6BC1B691DCE");
 
             entity.ToTable("OrderItem");
 
@@ -236,7 +315,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<OrderItemTopping>(entity =>
         {
-            entity.HasKey(e => e.OrderItemToppingId).HasName("PK__OrderIte__7DCEF815D765FA59");
+            entity.HasKey(e => e.OrderItemToppingId).HasName("PK__OrderIte__7DCEF815AC26FE62");
 
             entity.ToTable("OrderItemTopping");
 
@@ -262,7 +341,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<ProductSize>(entity =>
         {
-            entity.HasKey(e => e.ProductSizeId).HasName("PK__ProductS__062A9A68CEA9590D");
+            entity.HasKey(e => e.ProductSizeId).HasName("PK__ProductS__062A9A68C4ECB964");
 
             entity.ToTable("ProductSize");
 
@@ -288,7 +367,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Size>(entity =>
         {
-            entity.HasKey(e => e.SizeId).HasName("PK__Size__0DCACE3181BC15D1");
+            entity.HasKey(e => e.SizeId).HasName("PK__Size__0DCACE31633A47B4");
 
             entity.ToTable("Size");
 
@@ -303,7 +382,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Topping>(entity =>
         {
-            entity.HasKey(e => e.ToppingId).HasName("PK__Topping__141E1E0619B22A0B");
+            entity.HasKey(e => e.ToppingId).HasName("PK__Topping__141E1E06ED2A4DD5");
 
             entity.ToTable("Topping");
 
@@ -327,7 +406,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__85C600AF8259DA63");
+            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__85C600AF3AB08DD5");
 
             entity.ToTable("Transaction");
 
@@ -348,19 +427,6 @@ public partial class MilkTeaShopContext : DbContext
             entity.Property(e => e.TransactionType)
                 .HasMaxLength(20)
                 .HasColumnName("transaction_type");
-
-            entity.HasOne(d => d.Account).WithMany(p => p.TransactionAccounts)
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Transacti__accou__6383C8BA");
-
-            entity.HasOne(d => d.Order).WithMany(p => p.Transactions)
-                .HasForeignKey(d => d.OrderId)
-                .HasConstraintName("FK__Transacti__order__656C112C");
-
-            entity.HasOne(d => d.ProcessedByNavigation).WithMany(p => p.TransactionProcessedByNavigations)
-                .HasForeignKey(d => d.ProcessedBy)
-                .HasConstraintName("FK__Transacti__proce__6754599E");
         });
 
         OnModelCreatingPartial(modelBuilder);

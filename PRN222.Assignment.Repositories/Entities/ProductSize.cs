@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PRN222.Assignment.Repositories.Models;
+namespace PRN222.Assignment.Repositories.Entities;
 
 public partial class ProductSize
 {
@@ -12,6 +12,8 @@ public partial class ProductSize
     public int SizeId { get; set; }
 
     public decimal Price { get; set; }
+
+    public virtual ICollection<ComboItem> ComboItems { get; set; } = new List<ComboItem>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

@@ -1,4 +1,4 @@
-﻿using PRN222.Assignment.Repositories.Models;
+﻿using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Repositories.Repositories.Interface;
 using System;
 using System.Collections.Generic;
@@ -22,6 +22,9 @@ namespace PRN222.Assignment.Repositories.Repositories
         private IGenericRepository<Size>? _sizes;
         private IGenericRepository<OrderItemTopping>? _orderItemsToppings;
         private IGenericRepository<ProductSize>? _productSizes;
+        private IGenericRepository<Combo>? _combos;
+        private IGenericRepository<ComboItem>? _comboItems;
+        private IGenericRepository<OrderCombo>? _orderCombos;
         private IGenericRepository<Transaction>? _transactions;
 
         public UnitOfWork(MilkTeaShopContext context)
@@ -55,6 +58,15 @@ namespace PRN222.Assignment.Repositories.Repositories
 
         public IGenericRepository<ProductSize> ProductSizes
             => _productSizes ??= new GenericRepository<ProductSize>(_context);
+
+        public IGenericRepository<Combo> Combos
+            => _combos ??= new GenericRepository<Combo>(_context);
+
+        public IGenericRepository<ComboItem> ComboItems
+            => _comboItems ??= new GenericRepository<ComboItem>(_context);
+
+        public IGenericRepository<OrderCombo> OrderCombos
+            => _orderCombos ??= new GenericRepository<OrderCombo>(_context);
 
         public IGenericRepository<Transaction> Transactions
             => _transactions ??= new GenericRepository<Transaction>(_context);

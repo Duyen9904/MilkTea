@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PRN222.Assignment.Repositories.Models;
+namespace PRN222.Assignment.Repositories.Entities;
 
 public partial class Account
 {
@@ -28,8 +28,4 @@ public partial class Account
     public virtual ICollection<Order> OrderAccounts { get; set; } = new List<Order>();
 
     public virtual ICollection<Order> OrderProcessedByNavigations { get; set; } = new List<Order>();
-
-    public virtual ICollection<Transaction> TransactionAccounts { get; set; } = new List<Transaction>();
-
-    public virtual ICollection<Transaction> TransactionProcessedByNavigations { get; set; } = new List<Transaction>();
 }

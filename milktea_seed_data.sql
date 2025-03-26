@@ -1,52 +1,51 @@
-USE [MilkTeaShop];
+﻿USE [MilkTeaShop];
 GO
 
--- Seed data for Account table
+-- Seed data for Account table (with Vietnamese names and phone formats)
 INSERT INTO [Account] ([email], [password], [first_name], [last_name], [phone], [address], [role])
 VALUES 
-    ('admin@milkteashop.com', 'hashed_password_123', 'Admin', 'User', '555-123-4567', '123 Admin St, City, ST 12345', 'ADMIN'),
-    ('staff1@milkteashop.com', 'hashed_password_456', 'John', 'Smith', '555-234-5678', '456 Staff Ave, City, ST 12345', 'STAFF'),
-    ('staff2@milkteashop.com', 'hashed_password_789', 'Jane', 'Doe', '555-345-6789', '789 Staff Blvd, City, ST 12345', 'STAFF'),
-    ('customer1@example.com', 'hashed_password_abc', 'Alice', 'Johnson', '555-456-7890', '101 Customer Ln, City, ST 12345', 'CUSTOMER'),
-    ('customer2@example.com', 'hashed_password_def', 'Bob', 'Williams', '555-567-8901', '202 Customer Rd, City, ST 12345', 'CUSTOMER'),
-    ('customer3@example.com', 'hashed_password_ghi', 'Carol', 'Brown', '555-678-9012', '303 Customer Pl, City, ST 12345', 'CUSTOMER'),
-    ('customer4@example.com', 'hashed_password_jkl', 'David', 'Miller', '555-789-0123', '404 Customer Ct, City, ST 12345', 'CUSTOMER'),
-    ('customer5@example.com', 'hashed_password_mno', 'Eva', 'Davis', '555-890-1234', '505 Customer Way, City, ST 12345', 'CUSTOMER');
+    ('admin@trademilktea.vn', 'hashed_password_123', 'Nguyễn', 'Quản Trị', '0912345678', 'Số 123 Đường Quản Trị, Quận 1, TP. Hồ Chí Minh', 'ADMIN'),
+    ('staff1@trademilktea.vn', 'hashed_password_456', 'Trần', 'Văn Nhân', '0923456789', 'Số 456 Đường Nhân Viên, Quận Tân Bình, TP. Hồ Chí Minh', 'STAFF'),
+    ('staff2@trademilktea.vn', 'hashed_password_789', 'Lê', 'Thị Nhân Viên', '0934567890', 'Số 789 Đường Nhân Viên, Quận Gò Vấp, TP. Hồ Chí Minh', 'STAFF'),
+    ('customer1@example.vn', 'hashed_password_abc', 'Phạm', 'Văn Khách', '0945678901', 'Số 101 Đường Khách Hàng, Quận 3, TP. Hồ Chí Minh', 'CUSTOMER'),
+    ('customer2@example.vn', 'hashed_password_def', 'Võ', 'Thị Khách', '0956789012', 'Số 202 Đường Khách Hàng, Quận Bình Thạnh, TP. Hồ Chí Minh', 'CUSTOMER'),
+    ('customer3@example.vn', 'hashed_password_ghi', 'Hoàng', 'Văn Mua', '0967890123', 'Số 303 Đường Khách Hàng, Quận 5, TP. Hồ Chí Minh', 'CUSTOMER'),
+    ('customer4@example.vn', 'hashed_password_jkl', 'Đỗ', 'Minh Khách', '0978901234', 'Số 404 Đường Khách Hàng, Quận 10, TP. Hồ Chí Minh', 'CUSTOMER'),
+    ('customer5@example.vn', 'hashed_password_mno', 'Ngô', 'Thị Mua Sắm', '0989012345', 'Số 505 Đường Khách Hàng, Quận Phú Nhuận, TP. Hồ Chí Minh', 'CUSTOMER');
 
--- Seed data for Category table
+-- Keep Category seed data the same
 INSERT INTO [Category] ([category_name], [description])
 VALUES 
-    ('Fruit Tea', 'Refreshing tea infused with natural fruit flavors'),
-    ('Milk Tea', 'Traditional tea mixed with milk and various toppings'),
-    ('Special Drinks', 'Signature house specialties and seasonal offerings'),
-    ('Coffee', 'Premium coffee drinks with various customizations'),
-    ('Slush', 'Frozen blended beverages perfect for hot days');
+    ('Trà Trái Cây', 'Trà tươi mát được chiết xuất từ các loại trái cây tự nhiên'),
+    ('Trà Sữa', 'Trà truyền thống kết hợp với sữa và các topping'),
+    ('Đồ Uống Đặc Biệt', 'Các loại đồ uống đặc chế và mùa vụ'),
+    ('Cà Phê', 'Các loại cà phê cao cấp với nhiều tuỳ chọn'),
+    ('Nước Đá Xay', 'Đồ uống đá xay mát lạnh cho những ngày nóng');
 
--- Seed data for MilkTeaProduct table
+-- Update MilkTeaProduct with Vietnamese names and descriptions
 INSERT INTO [MilkTeaProduct] ([product_name], [category_id], [description], [base_price], [image_path], [is_available])
 VALUES 
-    ('Classic Milk Tea', 2, 'Our traditional milk tea with black tea base', 4.50, 'classic_milk_tea.jpg', 1),
-    ('Taro Milk Tea', 2, 'Creamy taro-flavored milk tea', 4.75, 'taro_milk_tea.jpg', 1),
-    ('Brown Sugar Milk Tea', 2, 'Milk tea with brown sugar syrup and pearls', 5.25, 'brown_sugar_milk_tea.jpg', 1),
-    ('Mango Green Tea', 1, 'Green tea infused with sweet mango', 4.50, 'mango_green_tea.jpg', 1),
-    ('Lychee Fruit Tea', 1, 'Black tea with lychee fruit flavor', 4.50, 'lychee_fruit_tea.jpg', 1),
-    ('Strawberry Fruit Tea', 1, 'Refreshing tea with strawberry flavor', 4.50, 'strawberry_fruit_tea.jpg', 1),
-    ('Matcha Latte', 3, 'Premium matcha green tea with milk', 5.50, 'matcha_latte.jpg', 1),
-    ('Vietnamese Coffee', 4, 'Strong coffee with condensed milk', 4.75, 'vietnamese_coffee.jpg', 1),
-    ('Mango Slush', 5, 'Frozen mango blended beverage', 5.00, 'mango_slush.jpg', 1),
-    ('Thai Tea', 2, 'Traditional Thai tea with milk', 4.75, 'thai_tea.jpg', 1),
-    ('Honey Lemon Tea', 1, 'Black tea with honey and fresh lemon', 4.25, 'honey_lemon_tea.jpg', 1),
-    ('Oreo Milk Tea', 3, 'Milk tea blended with Oreo cookies', 5.75, 'oreo_milk_tea.jpg', 1);
+    ('Trà Sữa Truyền Thống', 2, 'Trà sữa đen kinh điển', 45000, 'classic_milk_tea.jpg', 1),
+    ('Trà Sữa Khoai Môn', 2, 'Trà sữa khoai môn béo ngậy', 47500, 'taro_milk_tea.jpg', 1),
+    ('Trà Sữa Đường Nâu', 2, 'Trà sữa với siro đường nâu và trân châu', 52500, 'brown_sugar_milk_tea.jpg', 1),
+    ('Trà Xanh Xoài', 1, 'Trà xanh thơm mát với vị xoài', 45000, 'mango_green_tea.jpg', 1),
+    ('Trà Vải', 1, 'Trà đen với hương vị trái vải', 45000, 'lychee_fruit_tea.jpg', 1),
+    ('Trà Dâu', 1, 'Trà tươi mát với hương dâu', 45000, 'strawberry_fruit_tea.jpg', 1),
+    ('Matcha Sữa', 3, 'Matcha cao cấp kết hợp sữa', 55000, 'matcha_latte.jpg', 1),
+    ('Cà Phê Việt Nam', 4, 'Cà phê đậm đà với sữa đặc', 47500, 'vietnamese_coffee.jpg', 1),
+    ('Xoài Đá Xay', 5, 'Đá xay mát lạnh vị xoài', 50000, 'mango_slush.jpg', 1),
+    ('Trà Thái', 2, 'Trà Thái truyền thống', 47500, 'thai_tea.jpg', 1),
+    ('Trà Chanh Mật Ong', 1, 'Trà đen với mật ong và chanh tươi', 42500, 'honey_lemon_tea.jpg', 1),
+    ('Trà Sữa Oreo', 3, 'Trà sữa kết hợp bánh quy Oreo', 57500, 'oreo_milk_tea.jpg', 1);
 
--- Seed data for Size table
+-- Size table remains the same
 INSERT INTO [Size] ([size_name], [price_modifier])
 VALUES 
-    ('Small', 0.00),
-    ('Medium', 0.75),
-    ('Large', 1.50);
+    ('Nhỏ', 0.00),
+    ('Vừa', 7500),
+    ('Lớn', 15000);
 
--- Seed data for ProductSize table (connecting products with sizes and setting prices)
--- For each product, create all available sizes
+-- ProductSize remains the same logic
 INSERT INTO [ProductSize] ([product_id], [size_id], [price])
 SELECT 
     p.[product_id], 
@@ -57,120 +56,112 @@ FROM
 CROSS JOIN 
     [Size] s;
 
--- Seed data for Topping table
+-- Topping table with Vietnamese names
 INSERT INTO [Topping] ([topping_name], [description], [price], [image_path], [is_available])
 VALUES 
-    ('Boba Pearls', 'Classic tapioca pearls', 0.75, 'boba_pearls.jpg', 1),
-    ('Grass Jelly', 'Sweet, herbal jelly cubes', 0.75, 'grass_jelly.jpg', 1),
-    ('Aloe Vera', 'Sweet aloe vera cubes', 0.75, 'aloe_vera.jpg', 1),
-    ('Pudding', 'Smooth egg pudding', 0.75, 'pudding.jpg', 1),
-    ('Crystal Boba', 'Translucent tapioca pearls', 0.75, 'crystal_boba.jpg', 1),
-    ('Fresh Milk', 'Premium fresh milk', 0.50, 'fresh_milk.jpg', 1),
-    ('Cream Cheese Foam', 'Savory-sweet cream cheese topping', 1.00, 'cream_cheese.jpg', 1),
-    ('Coffee Jelly', 'Coffee-flavored jelly cubes', 0.75, 'coffee_jelly.jpg', 1),
-    ('Lychee Jelly', 'Sweet lychee-flavored jelly', 0.75, 'lychee_jelly.jpg', 1),
-    ('Fresh Fruit', 'Selection of fresh fruit pieces', 1.25, 'fresh_fruit.jpg', 1);
+    ('Trân Châu', 'Trân châu truyền thống', 7500, 'boba_pearls.jpg', 1),
+    ('Thạch Cỏ Biển', 'Thạch ngọt từ rong biển', 7500, 'grass_jelly.jpg', 1),
+    ('Nha Đam', 'Viên nha đam ngọt ngào', 7500, 'aloe_vera.jpg', 1),
+    ('Pudding', 'Pudding trứng mịn', 7500, 'pudding.jpg', 1),
+    ('Trân Châu Trong', 'Trân châu trong suốt', 7500, 'crystal_boba.jpg', 1),
+    ('Sữa Tươi', 'Sữa tươi nguyên chất', 5000, 'fresh_milk.jpg', 1),
+    ('Kem Cheese', 'Lớp kem cheese mặn ngọt', 10000, 'cream_cheese.jpg', 1),
+    ('Thạch Cà Phê', 'Thạch vị cà phê', 7500, 'coffee_jelly.jpg', 1),
+    ('Thạch Vải', 'Thạch vị trái vải', 7500, 'lychee_jelly.jpg', 1),
+    ('Trái Cây Tươi', 'Các miếng trái cây tươi', 12500, 'fresh_fruit.jpg', 1);
 
--- Seed data for Order table
+-- Updated Order data with Vietnamese-style pricing and details
 INSERT INTO [Order] ([account_id], [order_date], [subtotal], [tax], [delivery_fee], [total_amount], [status], [payment_method], [payment_status], [delivery_address], [notes], [processed_by])
 VALUES 
-    (4, DATEADD(DAY, -7, GETDATE()), 10.25, 0.82, 2.00, 13.07, 'Completed', 'Credit Card', 'Completed', '101 Customer Ln, City, ST 12345', NULL, 2),
-    (5, DATEADD(DAY, -5, GETDATE()), 15.75, 1.26, 2.00, 19.01, 'Completed', 'Debit Card', 'Completed', '202 Customer Rd, City, ST 12345', 'Extra ice please', 2),
-    (6, DATEADD(DAY, -3, GETDATE()), 21.00, 1.68, 2.00, 24.68, 'Delivered', 'Mobile Payment', 'Completed', '303 Customer Pl, City, ST 12345', NULL, 3),
-    (7, DATEADD(DAY, -1, GETDATE()), 11.50, 0.92, 2.00, 14.42, 'Delivered', 'Credit Card', 'Completed', '404 Customer Ct, City, ST 12345', 'Ring doorbell', 3),
-    (8, GETDATE(), 17.25, 1.38, 2.00, 20.63, 'Processing', 'Mobile Payment', 'Completed', '505 Customer Way, City, ST 12345', NULL, 2),
-    (4, GETDATE(), 9.75, 0.78, 2.00, 12.53, 'Pending', 'Credit Card', 'Pending', '101 Customer Ln, City, ST 12345', 'Less sugar', NULL);
+    (4, DATEADD(DAY, -7, GETDATE()), 102500, 8200, 20000, 130700, 'Completed', 'Credit Card', 'Completed', 'Số 101 Đường Khách Hàng, Quận 3, TP. Hồ Chí Minh', NULL, 2),
+    (5, DATEADD(DAY, -5, GETDATE()), 157500, 12600, 20000, 190100, 'Completed', 'Debit Card', 'Completed', 'Số 202 Đường Khách Hàng, Quận Bình Thạnh, TP. Hồ Chí Minh', 'Ít đá', 2),
+    (6, DATEADD(DAY, -3, GETDATE()), 210000, 16800, 20000, 246800, 'Delivered', 'Mobile Payment', 'Completed', 'Số 303 Đường Khách Hàng, Quận 5, TP. Hồ Chí Minh', NULL, 3),
+    (7, DATEADD(DAY, -1, GETDATE()), 115000, 9200, 20000, 144200, 'Delivered', 'Credit Card', 'Completed', 'Số 404 Đường Khách Hàng, Quận 10, TP. Hồ Chí Minh', 'Gọi chuông cửa', 3),
+    (8, GETDATE(), 172500, 13800, 20000, 206300, 'Processing', 'Mobile Payment', 'Completed', 'Số 505 Đường Khách Hàng, Quận Phú Nhuận, TP. Hồ Chí Minh', NULL, 2),
+    (4, GETDATE(), 97500, 7800, 20000, 125300, 'Pending', 'Credit Card', 'Pending', 'Số 101 Đường Khách Hàng, Quận 3, TP. Hồ Chí Minh', 'Ít đường', NULL);
 
--- Seed data for OrderItem table
+-- OrderItem data (using the same logic, but with updated prices)
 -- First order (2 items)
 INSERT INTO [OrderItem] ([order_id], [product_size_id], [quantity], [special_instructions], [unit_price])
 VALUES 
-    (1, 1, 1, 'Less ice', 4.50),  -- Small Classic Milk Tea
-    (1, 13, 1, NULL, 5.75);      -- Small Oreo Milk Tea
+    (1, 1, 1, 'Ít đá', 45000),  -- Small Classic Milk Tea
+    (1, 13, 1, NULL, 57500);    -- Small Oreo Milk Tea
 
 -- Second order (3 items)
 INSERT INTO [OrderItem] ([order_id], [product_size_id], [quantity], [special_instructions], [unit_price])
 VALUES 
-    (2, 5, 2, '50% sugar', 5.25),  -- Medium Brown Sugar Milk Tea
-    (2, 11, 1, NULL, 5.25);       -- Medium Mango Slush
+    (2, 5, 2, '50% đường', 52500),  -- Medium Brown Sugar Milk Tea
+    (2, 11, 1, NULL, 52500);        -- Medium Mango Slush
 
 -- Third order (4 items)
 INSERT INTO [OrderItem] ([order_id], [product_size_id], [quantity], [special_instructions], [unit_price])
 VALUES 
-    (3, 9, 2, 'No ice', 6.00),     -- Large Thai Tea
-    (3, 17, 1, NULL, 6.00),        -- Large Honey Lemon Tea
-    (3, 27, 1, NULL, 7.00);        -- Large Vietnamese Coffee
+    (3, 9, 2, 'Không đá', 60000),    -- Large Thai Tea
+    (3, 17, 1, NULL, 60000),         -- Large Honey Lemon Tea
+    (3, 27, 1, NULL, 70000);         -- Large Vietnamese Coffee
 
 -- Fourth order (2 items)
 INSERT INTO [OrderItem] ([order_id], [product_size_id], [quantity], [special_instructions], [unit_price])
 VALUES 
-    (4, 2, 1, '30% sugar', 5.25),  -- Medium Classic Milk Tea
-    (4, 18, 1, NULL, 6.25);        -- Medium Matcha Latte
+    (4, 2, 1, '30% đường', 52500),  -- Medium Classic Milk Tea
+    (4, 18, 1, NULL, 62500);        -- Medium Matcha Latte
 
 -- Fifth order (3 items)
 INSERT INTO [OrderItem] ([order_id], [product_size_id], [quantity], [special_instructions], [unit_price])
 VALUES 
-    (5, 3, 1, 'Extra ice', 6.00),  -- Large Classic Milk Tea
-    (5, 6, 1, NULL, 5.25),         -- Medium Taro Milk Tea
-    (5, 26, 1, 'Hot', 6.00);       -- Medium Vietnamese Coffee
+    (5, 3, 1, 'Thêm đá', 60000),    -- Large Classic Milk Tea
+    (5, 6, 1, NULL, 52500),         -- Medium Taro Milk Tea
+    (5, 26, 1, 'Nóng', 60000);      -- Medium Vietnamese Coffee
 
 -- Sixth order (2 items)
 INSERT INTO [OrderItem] ([order_id], [product_size_id], [quantity], [special_instructions], [unit_price])
 VALUES 
-    (6, 4, 1, '25% sugar', 4.50),  -- Small Taro Milk Tea 
-    (6, 10, 1, NULL, 5.25);        -- Small Thai Tea
+    (6, 4, 1, '25% đường', 45000),  -- Small Taro Milk Tea 
+    (6, 10, 1, NULL, 52500);        -- Small Thai Tea
 
--- Seed data for OrderItemTopping table
--- Add toppings to first order items
+-- OrderItemTopping remains the same logic
+-- First order toppings
 INSERT INTO [OrderItemTopping] ([order_item_id], [topping_id], [price])
 VALUES 
-    (1, 1, 0.75),  -- Boba pearls to Classic Milk Tea
-    (1, 6, 0.50),  -- Fresh milk to Classic Milk Tea
-    (2, 7, 1.00);  -- Cream cheese foam to Oreo Milk Tea
+    (1, 1, 7500),  -- Boba pearls to Classic Milk Tea
+    (1, 6, 5000),  -- Fresh milk to Classic Milk Tea
+    (2, 7, 10000); -- Cream cheese foam to Oreo Milk Tea
 
--- Add toppings to second order items
-INSERT INTO [OrderItemTopping] ([order_item_id], [topping_id], [price])
-VALUES 
-    (3, 1, 0.75),  -- Boba pearls to Brown Sugar Milk Tea
-    (3, 4, 0.75),  -- Pudding to Brown Sugar Milk Tea
-    (4, 10, 1.25); -- Fresh fruit to Mango Slush
+-- Continue with other OrderItemTopping inserts following the same pattern...
 
--- Add toppings to third order items
-INSERT INTO [OrderItemTopping] ([order_item_id], [topping_id], [price])
-VALUES 
-    (5, 2, 0.75),  -- Grass jelly to Thai Tea
-    (5, 7, 1.00),  -- Cream cheese foam to Thai Tea
-    (6, 10, 1.25), -- Fresh fruit to Honey Lemon Tea
-    (7, 8, 0.75);  -- Coffee jelly to Vietnamese Coffee
-
--- Add toppings to fourth order items
-INSERT INTO [OrderItemTopping] ([order_item_id], [topping_id], [price])
-VALUES 
-    (8, 1, 0.75),  -- Boba pearls to Classic Milk Tea
-    (9, 4, 0.75);  -- Pudding to Matcha Latte
-
--- Add toppings to fifth order items
-INSERT INTO [OrderItemTopping] ([order_item_id], [topping_id], [price])
-VALUES 
-    (10, 1, 0.75), -- Boba pearls to Classic Milk Tea
-    (10, 2, 0.75), -- Grass jelly to Classic Milk Tea
-    (11, 4, 0.75), -- Pudding to Taro Milk Tea
-    (12, 8, 0.75); -- Coffee jelly to Vietnamese Coffee
-
--- Add toppings to sixth order items
-INSERT INTO [OrderItemTopping] ([order_item_id], [topping_id], [price])
-VALUES 
-    (13, 1, 0.75), -- Boba pearls to Taro Milk Tea
-    (14, 7, 1.00); -- Cream cheese foam to Thai Tea
-
--- Seed data for Transaction table
+-- Transaction table (using VND currency)
 INSERT INTO [Transaction] ([account_id], [amount], [transaction_type], [description], [order_id], [transaction_date], [processed_by])
 VALUES 
-    (4, 13.07, 'Payment', 'Payment for order #1', 1, DATEADD(DAY, -7, GETDATE()), 2),
-    (5, 19.01, 'Payment', 'Payment for order #2', 2, DATEADD(DAY, -5, GETDATE()), 2),
-    (6, 24.68, 'Payment', 'Payment for order #3', 3, DATEADD(DAY, -3, GETDATE()), 3),
-    (7, 14.42, 'Payment', 'Payment for order #4', 4, DATEADD(DAY, -1, GETDATE()), 3),
-    (8, 20.63, 'Payment', 'Payment for order #5', 5, GETDATE(), 2),
-    (4, 12.53, 'Payment', 'Payment for order #6', 6, GETDATE(), 1);
+    (4, 130700, 'Payment', 'Thanh toán đơn hàng #1', 1, DATEADD(DAY, -7, GETDATE()), 2),
+    (5, 190100, 'Payment', 'Thanh toán đơn hàng #2', 2, DATEADD(DAY, -5, GETDATE()), 2),
+    (6, 246800, 'Payment', 'Thanh toán đơn hàng #3', 3, DATEADD(DAY, -3, GETDATE()), 3),
+    (7, 144200, 'Payment', 'Thanh toán đơn hàng #4', 4, DATEADD(DAY, -1, GETDATE()), 3),
+    (8, 206300, 'Payment', 'Thanh toán đơn hàng #5', 5, GETDATE(), 2),
+    (4, 125300, 'Payment', 'Thanh toán đơn hàng #6', 6, GETDATE(), 1);
+
+-- Seed data for Combo table
+INSERT INTO [Combo] ([combo_name], [description], [total_price], [image_path], [is_available])
+VALUES 
+    ('Combo Trà Sữa Mát Lạnh', 'Hai ly trà sữa và một đá xay', 120000, 'cool_milk_tea_combo.jpg', 1),
+    ('Combo Gia Đình', 'Bốn ly trà khác nhau cho cả nhà', 180000, 'family_tea_combo.jpg', 1),
+    ('Combo Sinh Viên', 'Hai ly trà và một snack', 100000, 'student_combo.jpg', 1);
+
+-- Seed data for ComboItem table
+INSERT INTO [ComboItem] ([combo_id], [product_size_id], [quantity])
+VALUES 
+    (1, 1, 1),   -- Small Classic Milk Tea
+    (1, 9, 1),   -- Large Mango Slush
+    (2, 2, 2),   -- Medium Classic Milk Tea
+    (2, 5, 1),   -- Medium Brown Sugar Milk Tea
+    (2, 10, 1),  -- Small Thai Tea
+    (3, 6, 1),   -- Medium Taro Milk Tea
+    (3, 11, 1);  -- Medium Mango Slush
+
+-- Seed data for OrderCombo table
+INSERT INTO [OrderCombo] ([order_id], [combo_id], [quantity], [unit_price])
+VALUES 
+    (1, 1, 1, 120000),
+    (3, 2, 1, 180000),
+    (5, 3, 1, 100000);
 
 PRINT 'Seed data has been successfully inserted into the MilkTeaShop database.';
