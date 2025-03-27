@@ -1,5 +1,69 @@
-﻿<h3>Login</h3>
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using PRN222.Assignment.Repositories.Entities
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SignInManager<Account> SignInManager
+
+<PageTitle>Login</PageTitle>
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+        <ValidationMessage For="@(() => loginModel.Email)" />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <Component />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger mt-3">
+            @errorMessage
+        </div>
+    }
+</EditForm>
 
 @code {
+    private LoginModel loginModel = new LoginModel();
+    private string errorMessage;
 
+    private async Task HandleLogin()
+    {
+        // Giả sử rằng bạn sẽ xác thực tài khoản thông qua Email và Password
+        var account = await SignInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password);
+
+        if (account != null)
+        {
+            // Điều hướng người dùng nếu đăng nhập thành công
+            Navigation.NavigateTo("/home");
+        }
+        else
+        {
+            errorMessage = "Email hoặc mật khẩu không đúng!";
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Email là bắt buộc.")]
+        [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ.")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
+        public string Password { get; set; }
+    }
 }
