@@ -1,14 +1,13 @@
 ﻿@page "/login"
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Forms
 @using PRN222.Assignment.Repositories.Entities
+@using PRN222.Assignment.Services
+@using PRN222.Assignment.Services.Customer.Interface
 @using System.ComponentModel.DataAnnotations
+@inject ICustomerService CustomerService
 @inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject SignInManager<Account> SignInManager
 
 <PageTitle>Login</PageTitle>
-
 <h3>Login</h3>
 
 <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
@@ -23,7 +22,7 @@
 
     <div class="form-group">
         <label for="password">Password</label>
-        <Component />
+        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
         <ValidationMessage For="@(() => loginModel.Password)" />
     </div>
 
@@ -43,12 +42,9 @@
 
     private async Task HandleLogin()
     {
-        // Giả sử rằng bạn sẽ xác thực tài khoản thông qua Email và Password
-        var account = await SignInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password);
-
+        var account = await CustomerService.Login(loginModel.Email, loginModel.Password);
         if (account != null)
         {
-            // Điều hướng người dùng nếu đăng nhập thành công
             Navigation.NavigateTo("/home");
         }
         else
