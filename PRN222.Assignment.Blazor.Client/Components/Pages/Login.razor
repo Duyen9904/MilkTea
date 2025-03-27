@@ -10,7 +10,7 @@
 <PageTitle>Login</PageTitle>
 <h3>Login</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -45,7 +45,7 @@
         var account = await CustomerService.Login(loginModel.Email, loginModel.Password);
         if (account != null)
         {
-            Navigation.NavigateTo("/home");
+            Navigation.NavigateTo("/Home", forceLoad: false);
         }
         else
         {
