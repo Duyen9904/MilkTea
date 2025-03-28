@@ -93,7 +93,6 @@ namespace PRN222.Assignment.Services.Orders
             return firstOrder;
         }
 
-
         private decimal CalculateSubtotal(Order order)
         {
             decimal subtotal = 0;
