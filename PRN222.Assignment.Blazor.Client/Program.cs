@@ -6,6 +6,7 @@ using PRN222.Assignment.Services.Customer;
 using PRN222.Assignment.Services.Customer.Interface;
 using Microsoft.EntityFrameworkCore;
 using PRN222.Assignment.Repositories.Entities;
+using PRN222.Assignment.Services.Product;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +26,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
+
+#region Register DI for repos, services
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IMilkTeaProductService, MilkTeaProductService>();
+
+#endregion
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

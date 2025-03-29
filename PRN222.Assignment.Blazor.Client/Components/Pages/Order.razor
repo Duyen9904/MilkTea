@@ -1,0 +1,34 @@
+﻿@page "/order"
+@using PRN222.Assignment.Repositories.Entities
+@using PRN222.Assignment.Services.Product
+@inject IMilkTeaProductService MilkTeaProductService
+
+<h3 class="text-xl font-semibold mb-4">Order Milk Tea</h3>
+
+@if (products == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="grid grid-cols-2 gap-4">
+        @foreach (var product in products)
+        {
+            <div class="p-4 border rounded shadow">
+                <h4 class="font-bold">@product.ProductName</h4>
+                <p class="text-sm text-gray-500">@product.Description</p>
+                <p class="text-green-600 font-semibold">$@product.BasePrice</p>
+                <button class="mt-2 px-3 py-1 bg-blue-500 text-white rounded">Add</button>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<MilkTeaProduct>? products;
+
+    protected override void OnInitialized()
+    {
+        products = MilkTeaProductService.GetMilkTeaProducts();
+    }
+}
