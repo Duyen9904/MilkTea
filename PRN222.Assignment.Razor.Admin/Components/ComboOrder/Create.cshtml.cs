@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PRN222.Assignment.Repositories.Entities;
-using PRN222.Assignment.Services.ComboOrders;
+using PRN222.Assignment.Services.Interfaces;
 
 namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
 {
     public class CreateModel : PageModel
     {
-        private readonly IComboOrderService _comboOrderService;
+        private readonly IOrderComboService _comboOrderService;
         private readonly MilkTeaShopContext _context;
 
-        public CreateModel(IComboOrderService comboOrderService, MilkTeaShopContext context)
+        public CreateModel(IOrderComboService comboOrderService, MilkTeaShopContext context)
         {
             _comboOrderService = comboOrderService;
             _context = context;
@@ -38,7 +38,7 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
                 return Page();
             }
 
-            _comboOrderService.AddOrderCombo(OrderCombo);
+            await _comboOrderService.CreateOrderComboAsync(OrderCombo);
             await Task.CompletedTask;
             return RedirectToPage("./Index");
         }

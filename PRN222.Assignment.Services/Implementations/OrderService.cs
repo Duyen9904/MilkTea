@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Linq.Expressions;
+using PRN222.Assignment.Services.Interfaces;
 
-namespace PRN222.Assignment.Services.Orders
+namespace PRN222.Assignment.Services.Implementations
 {
     public class OrderService : IOrderService
     {
@@ -25,7 +26,7 @@ namespace PRN222.Assignment.Services.Orders
                 filter: o => o.OrderDate >= DateTime.UtcNow.AddDays(-7), // Lọc đơn hàng trong 7 ngày gần nhất
                 orderBy: null, // Không sắp xếp
                 pageIndex: 1, // Trang đầu tiên
-                pageSize: 3, // Lấy 3 đơn hàng mỗi trang,
+                pageSize: 10, // Lấy 3 đơn hàng mỗi trang,
                 o => o.Account,
                 o => o.OrderCombos,
                 o => o.OrderCombos.Select(oc => oc.Combo),

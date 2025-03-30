@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN222.Assignment.Services.Customer.Interface
+namespace PRN222.Assignment.Services.Interfaces
 {
-    public interface ICustomerService
+    public interface IAccountService
     {
         Task<Account?> Login(string username, string password);
     }

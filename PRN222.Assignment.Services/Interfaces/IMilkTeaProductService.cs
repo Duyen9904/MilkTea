@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PRN222.Assignment.Repositories.Entities;
 
-namespace PRN222.Assignment.Services.Product
+namespace PRN222.Assignment.Services.Interfaces
 {
     public interface IMilkTeaProductService
     {

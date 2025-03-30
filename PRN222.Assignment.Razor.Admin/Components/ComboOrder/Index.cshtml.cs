@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PRN222.Assignment.Repositories.Entities;
-using PRN222.Assignment.Services.ComboOrders;
+using PRN222.Assignment.Services.Interfaces;
 
 namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
 {
     public class IndexModel : PageModel
     {
-        private readonly IComboOrderService _comboOrderService;
+        private readonly IOrderComboService _comboOrderService;
 
-        public IndexModel(IComboOrderService comboOrderService)
+        public IndexModel(IOrderComboService comboOrderService)
         {
             _comboOrderService = comboOrderService;
         }
@@ -23,8 +23,7 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
 
         public async Task OnGetAsync()
         {
-            OrderCombo = _comboOrderService.GetOrderCombos(); 
-            await Task.CompletedTask;
+            OrderCombo = await _comboOrderService.GetAllOrderCombos(); 
         }
     }
 }

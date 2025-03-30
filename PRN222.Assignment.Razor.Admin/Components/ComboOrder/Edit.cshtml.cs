@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRN222.Assignment.Repositories.Entities;
-using PRN222.Assignment.Services.ComboOrders;
+using PRN222.Assignment.Services.Interfaces;
 
 namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
 {
     public class EditModel : PageModel
     {
-        private readonly IComboOrderService _comboOrderService;
+        private readonly IOrderComboService _comboOrderService;
         private readonly MilkTeaShopContext _context;
 
-        public EditModel(IComboOrderService comboOrderService, MilkTeaShopContext context)
+        public EditModel(IOrderComboService comboOrderService, MilkTeaShopContext context)
         {
             _comboOrderService = comboOrderService;
             _context = context;
@@ -25,14 +25,14 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
         [BindProperty]
         public OrderCombo OrderCombo { get; set; } = default!;
 
-        public IActionResult OnGet(int? id)
+        public async Task<IActionResult> OnGet(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            OrderCombo = _comboOrderService.GetOrderComboById(id.Value);  // Use service to get OrderCombo by ID
+            OrderCombo = await _comboOrderService.GetOrderComboByIdAsync(id);  // Use service to get OrderCombo by ID
 
             if (OrderCombo == null)
             {
@@ -52,7 +52,7 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
                 return Page();
             }
 
-            _comboOrderService.UpdateOrderCombo(OrderCombo); 
+            await _comboOrderService.UpdateOrderComboAsync(OrderCombo); 
             await Task.CompletedTask;
             return RedirectToPage("./Index");
 

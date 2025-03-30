@@ -6,15 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using PRN222.Assignment.Repositories.Entities;
-using PRN222.Assignment.Services.ComboOrders;
+using PRN222.Assignment.Services.Interfaces;
+
 
 namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
 {
     public class DeleteModel : PageModel
     {
-        private readonly IComboOrderService _comboOrderService;
+        private readonly IOrderComboService _comboOrderService;
 
-        public DeleteModel(IComboOrderService comboOrderService)
+        public DeleteModel(IOrderComboService comboOrderService)
         {
             _comboOrderService = comboOrderService;
         }
@@ -22,14 +23,14 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
         [BindProperty]
         public OrderCombo OrderCombo { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            OrderCombo = _comboOrderService.GetOrderComboById(id.Value);  // Use service to get the OrderCombo by ID
+            OrderCombo = await _comboOrderService.GetOrderComboByIdAsync(id); 
 
             if (OrderCombo == null)
             {
@@ -39,18 +40,18 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            OrderCombo = _comboOrderService.GetOrderComboById(id.Value);
+            OrderCombo = await _comboOrderService.GetOrderComboByIdAsync(id);
 
             if (OrderCombo != null)
             {
-                _comboOrderService.DeleteOrderCombo(OrderCombo);  // Use service to delete the OrderCombo
+                await _comboOrderService.CreateOrderComboAsync(OrderCombo);  // Use service to delete the OrderCombo
             }
             await Task.CompletedTask;
             return RedirectToPage("./Index");
