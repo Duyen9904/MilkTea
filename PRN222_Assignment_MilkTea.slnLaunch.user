@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "PRN222.Assignment.Razor.Admin\\PRN222.Assignment.Razor.Admin.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "PRN222.Assignment.Blazor.Client\\PRN222.Assignment.Blazor.Client.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

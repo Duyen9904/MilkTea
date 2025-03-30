@@ -10,4 +10,8 @@
     <ProjectReference Include="..\PRN222.Assignment.Repositories\PRN222.Assignment.Repositories.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="OrderItems\" />
+  </ItemGroup>
+
 </Project>
