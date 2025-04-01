@@ -1,16 +1,16 @@
 ﻿@page "/login"
-@using Microsoft.AspNetCore.Components.Forms
-@using PRN222.Assignment.Repositories.Entities
-@using PRN222.Assignment.Services
-@using PRN222.Assignment.Services.Customer.Interface
-@using System.ComponentModel.DataAnnotations
-@inject ICustomerService CustomerService
+@    using Microsoft.AspNetCore.Components.Forms
+@    using PRN222.Assignment.Repositories.Entities
+@    using PRN222.Assignment.Services
+@    using PRN222.Assignment.Services.Customer.Interface
+@    using System.ComponentModel.DataAnnotations
+@inject IAccountService CustomerService
 @inject NavigationManager Navigation
 
 <PageTitle>Login</PageTitle>
 <h3>Login</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -45,7 +45,7 @@
         var account = await CustomerService.Login(loginModel.Email, loginModel.Password);
         if (account != null)
         {
-            Navigation.NavigateTo("/home");
+            Navigation.NavigateTo("/Home", forceLoad: false);
         }
         else
         {

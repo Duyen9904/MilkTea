@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN222.Assignment.Services.Orders
+namespace PRN222.Assignment.Services.Interfaces
 {
     public interface IOrderService
     {

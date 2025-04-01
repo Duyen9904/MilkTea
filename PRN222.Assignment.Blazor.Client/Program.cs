@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using PRN222.Assignment.Blazor.Client.Components;
 using PRN222.Assignment.Repositories.Repositories.Interface;
 using PRN222.Assignment.Repositories.Repositories;
-using PRN222.Assignment.Services.Customer;
-using PRN222.Assignment.Services.Customer.Interface;
 using Microsoft.EntityFrameworkCore;
 using PRN222.Assignment.Repositories.Entities;
-using PRN222.Assignment.Services.Product;
+using PRN222.Assignment.Services.CustomerService;
+using PRN222.Assignment.Services.Interfaces;
+using PRN222.Assignment.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,19 +26,22 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
-
-#region Register DI for repos, services
-
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IComboService, ComboService>();
+builder.Services.AddScoped<IComboItemService, ComboItemService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IMilkTeaProductService, MilkTeaProductService>();
-
-#endregion
-
-
-
-
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderComboService, OrderComboService>();
+builder.Services.AddScoped<IOrderItemService, OrderItemService>();
+builder.Services.AddScoped<IOrderItemToppingService, OrderItemToppingService>();
+builder.Services.AddScoped<IProductSizeService, ProductSizeService>();
+builder.Services.AddScoped<ISizeService, SizeService>();
+builder.Services.AddScoped<IToppingService, ToppingService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

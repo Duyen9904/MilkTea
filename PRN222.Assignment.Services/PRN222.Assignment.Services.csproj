@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PRN222.Assignment.Repositories\PRN222.Assignment.Repositories.csproj" />
+    <Compile Remove="OrderItems\**" />
+    <EmbeddedResource Remove="OrderItems\**" />
+    <None Remove="OrderItems\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="OrderItems\" />
+    <ProjectReference Include="..\PRN222.Assignment.Repositories\PRN222.Assignment.Repositories.csproj" />
   </ItemGroup>
 
 </Project>

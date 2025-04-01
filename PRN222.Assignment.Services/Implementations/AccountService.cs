@@ -1,18 +1,18 @@
 ﻿using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Repositories.Repositories.Interface;
-using PRN222.Assignment.Services.Customer.Interface;
+using PRN222.Assignment.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN222.Assignment.Services.Customer
+namespace PRN222.Assignment.Services.CustomerService
 {
-    public class CustomerService : ICustomerService
+    public class AccountService : IAccountService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CustomerService(IUnitOfWork unitOfWork)
+        public AccountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

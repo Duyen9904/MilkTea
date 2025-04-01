@@ -1,12 +1,13 @@
 ﻿using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Repositories.Repositories.Interface;
+using PRN222.Assignment.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PRN222.Assignment.Services.OrderCombos
+namespace PRN222.Assignment.Services.Implementations
 {
     public class OrderComboService : IOrderComboService
     {
