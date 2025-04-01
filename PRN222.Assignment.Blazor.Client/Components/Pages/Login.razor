@@ -1,65 +1,65 @@
-﻿@page "/login"
-@    using Microsoft.AspNetCore.Components.Forms
-@    using PRN222.Assignment.Repositories.Entities
-@    using PRN222.Assignment.Services
-@    using PRN222.Assignment.Services.Customer.Interface
-@    using System.ComponentModel.DataAnnotations
-@inject IAccountService CustomerService
-@inject NavigationManager Navigation
+﻿@* @page "/login" *@
+@* @    using Microsoft.AspNetCore.Components.Forms *@
+@* @    using PRN222.Assignment.Repositories.Entities *@
+@* @    using PRN222.Assignment.Services *@
+@* @    using PRN222.Assignment.Services.Customer.Interface *@
+@* @    using System.ComponentModel.DataAnnotations *@
+@* @inject IAccountService CustomerService *@
+@* @inject NavigationManager Navigation *@
 
-<PageTitle>Login</PageTitle>
-<h3>Login</h3>
+@* <PageTitle>Login</PageTitle> *@
+@* <h3>Login</h3> *@
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+@* <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm"> *@
+@*     <DataAnnotationsValidator /> *@
+@*     <ValidationSummary /> *@
 
-    <div class="form-group">
-        <label for="email">Email</label>
-        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
-        <ValidationMessage For="@(() => loginModel.Email)" />
-    </div>
+@*     <div class="form-group"> *@
+@*         <label for="email">Email</label> *@
+@*         <InputText id="email" class="form-control" @bind-Value="loginModel.Email" /> *@
+@*         <ValidationMessage For="@(() => loginModel.Email)" /> *@
+@*     </div> *@
 
-    <div class="form-group">
-        <label for="password">Password</label>
-        <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" />
-        <ValidationMessage For="@(() => loginModel.Password)" />
-    </div>
+@*     <div class="form-group"> *@
+@*         <label for="password">Password</label> *@
+@*         <InputText id="password" type="password" class="form-control" @bind-Value="loginModel.Password" /> *@
+@*         <ValidationMessage For="@(() => loginModel.Password)" /> *@
+@*     </div> *@
 
-    <button type="submit" class="btn btn-primary">Login</button>
+@*     <button type="submit" class="btn btn-primary">Login</button> *@
 
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger mt-3">
-            @errorMessage
-        </div>
-    }
-</EditForm>
+@*     @if (!string.IsNullOrEmpty(errorMessage)) *@
+@*     { *@
+@*         <div class="alert alert-danger mt-3"> *@
+@*             @errorMessage *@
+@*         </div> *@
+@*     } *@
+@* </EditForm> *@
 
-@code {
-    private LoginModel loginModel = new LoginModel();
-    private string errorMessage;
+@* @code { *@
+@*     private LoginModel loginModel = new LoginModel(); *@
+@*     private string errorMessage; *@
 
-    private async Task HandleLogin()
-    {
-        var account = await CustomerService.Login(loginModel.Email, loginModel.Password);
-        if (account != null)
-        {
-            Navigation.NavigateTo("/Home", forceLoad: false);
-        }
-        else
-        {
-            errorMessage = "Email hoặc mật khẩu không đúng!";
-        }
-    }
+@*     private async Task HandleLogin() *@
+@*     { *@
+@*         var account = await CustomerService.Login(loginModel.Email, loginModel.Password); *@
+@*         if (account != null) *@
+@*         { *@
+@*             Navigation.NavigateTo("/Home", forceLoad: false); *@
+@*         } *@
+@*         else *@
+@*         { *@
+@*             errorMessage = "Email hoặc mật khẩu không đúng!"; *@
+@*         } *@
+@*     } *@
 
-    public class LoginModel
-    {
-        [Required(ErrorMessage = "Email là bắt buộc.")]
-        [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ.")]
-        public string Email { get; set; }
+@*     public class LoginModel *@
+@*     { *@
+@*         [Required(ErrorMessage = "Email là bắt buộc.")] *@
+@*         [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ.")] *@
+@*         public string Email { get; set; } *@
 
-        [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
-        public string Password { get; set; }
-    }
-}
+@*         [Required(ErrorMessage = "Mật khẩu là bắt buộc.")] *@
+@*         public string Password { get; set; } *@
+@*     } *@
+@* } *@

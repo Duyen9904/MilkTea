@@ -1,7 +1,12 @@
-﻿@page "/order"
+﻿@* 
+Order.razor
+*@
+@page "/order"
 @using PRN222.Assignment.Repositories.Entities
-@using PRN222.Assignment.Services.Product
+@using PRN222.Assignment.Services.Interfaces
 @inject IMilkTeaProductService MilkTeaProductService
+@inject IProductSizeService ProductSizeService
+
 
 <h3 class="text-xl font-semibold mb-4">Order Milk Tea</h3>
 
@@ -15,10 +20,35 @@ else
         @foreach (var product in products)
         {
             <div class="p-4 border rounded shadow">
-                <h4 class="font-bold">@product.ProductName</h4>
-                <p class="text-sm text-gray-500">@product.Description</p>
-                <p class="text-green-600 font-semibold">$@product.BasePrice</p>
-                <button class="mt-2 px-3 py-1 bg-blue-500 text-white rounded">Add</button>
+                <div class="flex justify-between items-start gap-4">
+                    <!-- Product Info -->
+                    <div class="flex-1">
+                        <h4 class="font-bold">@product.ProductName</h4>
+                        <p class="text-sm text-gray-500">@product.Description</p>
+                        <p class="text-green-600 font-semibold">@product.BasePrice.ToString("N0") đ</p>
+                    </div>
+
+                    <!-- Size Options -->
+                    @if (productSizes.TryGetValue(product.ProductId, out var sizes))
+                    {
+                        <div class="flex flex-col items-center text-sm font-medium text-gray-700">
+                            @foreach (var size in sizes)
+                            {
+                                <span>@size</span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-sm text-gray-400 italic">No sizes</div>
+                    }
+
+
+                    <!-- Add Button -->
+                    <div class="flex items-center">
+                        <button class="px-3 py-1 bg-blue-500 rounded">Add</button>
+                    </div>
+                </div>
             </div>
         }
     </div>
@@ -26,9 +56,22 @@ else
 
 @code {
     private List<MilkTeaProduct>? products;
+    private Dictionary<int, List<string>> productSizes = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        products = MilkTeaProductService.GetMilkTeaProducts();
+        var list = MilkTeaProductService.GetMilkTeaProducts();
+        products = list;
+
+        // Load sizes for each product
+        foreach (var product in products)
+        {
+            var sizes = await ProductSizeService.GetProductSizesByProductIdAsync(product.ProductId);
+            productSizes[product.ProductId] = sizes
+                .Select(ps => ps.Size.SizeName)
+                .Distinct()
+                .ToList();
+        }
     }
+
 }
