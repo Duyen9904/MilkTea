@@ -142,9 +142,9 @@ VALUES
 -- Seed data for Combo table
 INSERT INTO [Combo] ([combo_name], [description], [total_price], [image_path], [is_available])
 VALUES 
-    (N'Combo Trà Sữa Mát Lạnh', N'Hai ly trà sữa và một đá xay', 120000, 'cool_milk_tea_combo.jpg', 1),
-    (N'Combo Gia Đình', N'Bốn ly trà khác nhau cho cả nhà', 180000, 'family_tea_combo.jpg', 1),
-    (N'Combo Sinh Viên', N'Hai ly trà và một snack', 100000, 'student_combo.jpg', 1);
+    (N'Combo Trà Sữa Mát Lạnh', N'Hai ly trà sữa và một đá xay', 120000, 'https://static.hotdeal.vn/images/1586/1585817/60x60/355542-.jpg', 1),
+    (N'Combo Gia Đình', N'Bốn ly trà khác nhau cho cả nhà', 180000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCiWXmXB149ps9_xzKbGFgReYV5h8dpusNgg&s', 1),
+    (N'Combo Sinh Viên', N'Hai ly trà và một snack', 100000, 'https://bizweb.dktcdn.net/thumb/grande/100/421/036/collections/combo-tra-sua-tien-loi.jpg?v=1620448606117', 1);
 
 -- Seed data for ComboItem table
 INSERT INTO [ComboItem] ([combo_id], [product_size_id], [quantity])
