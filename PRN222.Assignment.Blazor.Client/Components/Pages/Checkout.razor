@@ -1,0 +1,185 @@
+﻿@* path PRN222.Assignment.Blazor.Client/Components/Pages/Checkout.razor *@
+@page "/checkout"
+@rendermode InteractiveServer
+@inherits CheckoutBase
+
+<div class="container mt-4">
+    <h2>Checkout</h2>
+
+    @if (orderItems == null || !orderItems.Any())
+    {
+        <div class="alert alert-warning">
+            Your order is empty. Please add some items to your order.
+            <a href="/order" class="btn btn-primary mt-2">Go to Order Page</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            @foreach (var item in orderItems)
+                            {
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span>@item.ProductSize.Product.ProductName (@item.ProductSize.Size.SizeName) × @item.Quantity</span>
+                                            @if (item.OrderItemToppings.Any())
+                                            {
+                                                <div class="small text-muted mt-1">
+                                                    <span>Toppings: </span>
+                                                    @string.Join(", ", item.OrderItemToppings.Select(t => t.Topping.ToppingName))
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.SpecialInstructions))
+                                            {
+                                                <div class="small text-muted">
+                                                    <span>Instructions: </span>@item.SpecialInstructions
+                                                </div>
+                                            }
+                                        </div>
+                                        <span>@string.Format("{0:N0} đ", item.Subtotal)</span>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Delivery Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label for="deliveryAddress">Delivery Address</label>
+                            <textarea class="form-control" id="deliveryAddress" rows="3"
+                                      @bind="currentOrder.DeliveryAddress" placeholder="Enter your complete delivery address"></textarea>
+                            @if (showValidationErrors && string.IsNullOrWhiteSpace(currentOrder.DeliveryAddress))
+                            {
+                                <div class="text-danger">Delivery address is required</div>
+                            }
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Additional Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" rows="2"
+                                      @bind="currentOrder.Notes" placeholder="Any special instructions for delivery..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Payment Details</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="form-group mb-3">
+                            <label>Payment Method</label>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="cashPayment"
+                                           value="Cash" checked="@(currentOrder.PaymentMethod == "Cash")"
+                                           @onchange="@(_ => currentOrder.PaymentMethod = "Cash")" />
+                                    <label class="form-check-label" for="cashPayment">
+                                        Cash on Delivery
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard"
+                                           value="Credit Card" checked="@(currentOrder.PaymentMethod == "Credit Card")"
+                                           @onchange="@(_ => currentOrder.PaymentMethod = "Credit Card")" />
+                                    <label class="form-check-label" for="creditCard">
+                                        Credit Card
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="debitCard"
+                                           value="Debit Card" checked="@(currentOrder.PaymentMethod == "Debit Card")"
+                                           @onchange="@(_ => currentOrder.PaymentMethod = "Debit Card")" />
+                                    <label class="form-check-label" for="debitCard">
+                                        Debit Card
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="mobilePayment"
+                                           value="Mobile Payment" checked="@(currentOrder.PaymentMethod == "Mobile Payment")"
+                                           @onchange="@(_ => currentOrder.PaymentMethod = "Mobile Payment")" />
+                                    <label class="form-check-label" for="mobilePayment">
+                                        Mobile Payment
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>@string.Format("{0:N0} đ", currentOrder.Subtotal)</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax (10%):</span>
+                                <span>@string.Format("{0:N0} đ", currentOrder.Tax)</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Delivery Fee:</span>
+                                <span>@string.Format("{0:N0} đ", currentOrder.DeliveryFee)</span>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold">Total:</span>
+                                <span class="fw-bold">@string.Format("{0:N0} đ", currentOrder.TotalAmount)</span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button class="btn btn-primary" @onclick="PlaceOrder">
+                                @if (isProcessing)
+                                {
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span class="ms-2">Processing...</span>
+                                }
+                                else
+                                {
+                                    <span>Place Order</span>
+                                }
+                            </button>
+                            <a href="/order" class="btn btn-outline-secondary">Back to Order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (showOrderSuccess)
+{
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Order Placed Successfully!</h5>
+                    <button type="button" class="btn-close" @onclick="CloseSuccessModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 48px;"></i>
+                    </div>
+                    <p>Your order has been placed successfully. Your order ID is: <strong>@confirmedOrderId</strong></p>
+                    <p>You will receive a confirmation shortly.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="GoToHomePage">Go to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

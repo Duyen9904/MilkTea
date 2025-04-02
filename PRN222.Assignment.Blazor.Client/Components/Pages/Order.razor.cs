@@ -16,6 +16,9 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
 
+        [Inject]
+        protected OrderStateService OrderStateService { get; set; }
+
         protected List<Category> categories = new List<Category>();
         protected List<MilkTeaProduct> products = new List<MilkTeaProduct>();
         protected List<ProductSize> productSizes = new List<ProductSize>();
@@ -28,14 +31,14 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         protected int selectedProductSizeId = 0;
         protected int quantity = 1;
 
-        // Order data
+        // Order data - using fully qualified type name
         protected PRN222.Assignment.Repositories.Entities.Order currentOrder = new PRN222.Assignment.Repositories.Entities.Order
         {
             AccountId = 2,
             OrderDate = DateTime.Now,
             Status = "Pending",
             PaymentStatus = "Pending",
-            PaymentMethod = "Cash",
+            PaymentMethod = "Cash", // Valid value from check constraint
             DeliveryAddress = "",
             Subtotal = 0,
             Tax = 0,
@@ -59,6 +62,15 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             {
                 selectedCategoryId = categories.First().CategoryId;
                 await LoadProductsByCategory(selectedCategoryId);
+            }
+
+            // Check if there's existing order data in state
+            var orderData = OrderStateService.GetCurrentOrderData();
+            if (orderData != null)
+            {
+                orderItems = orderData.OrderItems;
+                currentOrder = orderData.Order;
+                subtotal = currentOrder.Subtotal;
             }
         }
 
@@ -188,6 +200,21 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
             // Reset selection
             CancelSelection();
+        }
+
+        protected void ProceedToCheckout()
+        {
+            if (!orderItems.Any())
+                return;
+
+            // Update order with current subtotal
+            currentOrder.Subtotal = subtotal;
+
+            // Save order data to state service
+            OrderStateService.SetOrderData(currentOrder, orderItems);
+
+            // Navigate to checkout page
+            NavigationManager.NavigateTo("/checkout");
         }
     }
 }

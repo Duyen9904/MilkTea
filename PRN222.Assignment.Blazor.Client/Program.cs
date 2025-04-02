@@ -7,6 +7,7 @@ using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.CustomerService;
 using PRN222.Assignment.Services.Interfaces;
 using PRN222.Assignment.Services.Implementations;
+using PRN222.Assignment.Blazor.Client.Components.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,9 @@ builder.Services.AddScoped<IToppingService, ToppingService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddScoped<IClientOrderService, ClientOrderService>();
+
+builder.Services.AddScoped<OrderStateService>();
+
 
 var app = builder.Build();
 

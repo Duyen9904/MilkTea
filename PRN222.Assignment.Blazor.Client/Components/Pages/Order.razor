@@ -176,7 +176,8 @@
                             </p>
                         </div>
 
-                        <button class="btn btn-primary w-100 mt-3">
+                        <!-- Replace the existing Proceed to Checkout button in Order.razor with this -->
+                        <button class="btn btn-primary w-100 mt-3" @onclick="ProceedToCheckout">
                             Proceed to Checkout
                         </button>
                     }
