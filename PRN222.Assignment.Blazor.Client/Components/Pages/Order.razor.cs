@@ -19,6 +19,10 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         protected List<Category> categories = new List<Category>();
         protected List<MilkTeaProduct> products = new List<MilkTeaProduct>();
         protected List<ProductSize> productSizes = new List<ProductSize>();
+        protected List<Topping> availableToppings = new List<Topping>();
+        protected List<int> selectedToppingIds = new List<int>();
+        protected string specialInstructions = string.Empty;
+
         protected int selectedCategoryId = 0;
         protected MilkTeaProduct selectedProduct;
         protected int selectedProductSizeId = 0;
@@ -48,6 +52,9 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             var allCategories = await ClientOrderService.GetAllCategoriesAsync();
             categories = allCategories.ToList();
 
+            // Load available toppings
+            availableToppings = (await ClientOrderService.GetAllAvailableToppingsAsync()).ToList();
+
             if (categories.Any())
             {
                 selectedCategoryId = categories.First().CategoryId;
@@ -71,6 +78,8 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             selectedProduct = product;
             selectedProductSizeId = 0;
             quantity = 1;
+            selectedToppingIds.Clear();
+            specialInstructions = string.Empty;
 
             // Load product sizes
             productSizes = (await ClientOrderService.GetProductSizesByProductIdAsync(product.ProductId)).ToList();
@@ -87,6 +96,28 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             selectedProduct = null;
             selectedProductSizeId = 0;
             productSizes.Clear();
+            selectedToppingIds.Clear();
+            specialInstructions = string.Empty;
+        }
+
+        protected void ToggleTopping(int toppingId, object isChecked)
+        {
+            if (isChecked is bool checkedValue)
+            {
+                if (checkedValue && !selectedToppingIds.Contains(toppingId))
+                {
+                    selectedToppingIds.Add(toppingId);
+                }
+                else if (!checkedValue && selectedToppingIds.Contains(toppingId))
+                {
+                    selectedToppingIds.Remove(toppingId);
+                }
+            }
+        }
+
+        protected bool IsToppingSelected(int toppingId)
+        {
+            return selectedToppingIds.Contains(toppingId);
         }
 
         protected async Task AddToOrder()
@@ -98,7 +129,30 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             if (productSize == null)
                 return;
 
-            // Create new order item (not persisted to database yet)
+            // Calculate the subtotal including toppings
+            decimal itemSubtotal = await ClientOrderService.CalculateOrderItemSubtotalAsync(
+                selectedProductSizeId,
+                quantity,
+                selectedToppingIds);
+
+            // If calculation fails, use manual calculation
+            if (itemSubtotal <= 0)
+            {
+                // Calculate base price
+                itemSubtotal = quantity * productSize.Price;
+
+                // Add topping prices
+                foreach (var toppingId in selectedToppingIds)
+                {
+                    var topping = availableToppings.FirstOrDefault(t => t.ToppingId == toppingId);
+                    if (topping != null)
+                    {
+                        itemSubtotal += quantity * topping.Price;
+                    }
+                }
+            }
+
+            // Create new order item
             var orderItem = new OrderItem
             {
                 OrderId = 0, // Temporary, will be set when order is created
@@ -106,8 +160,26 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 ProductSize = productSize, // For display purposes
                 Quantity = quantity,
                 UnitPrice = productSize.Price,
-                Subtotal = productSize.Price * quantity
+                Subtotal = itemSubtotal,
+                SpecialInstructions = string.IsNullOrWhiteSpace(specialInstructions) ? null : specialInstructions,
+                OrderItemToppings = new List<OrderItemTopping>()
             };
+
+            // Add toppings to the order item
+            foreach (var toppingId in selectedToppingIds)
+            {
+                var topping = availableToppings.FirstOrDefault(t => t.ToppingId == toppingId);
+                if (topping != null)
+                {
+                    orderItem.OrderItemToppings.Add(new OrderItemTopping
+                    {
+                        OrderItemId = 0, // Temporary, will be set when orderItem is created
+                        ToppingId = topping.ToppingId,
+                        Topping = topping, // For display purposes
+                        Price = topping.Price
+                    });
+                }
+            }
 
             orderItems.Add(orderItem);
 

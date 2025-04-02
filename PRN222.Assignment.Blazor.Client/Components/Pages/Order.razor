@@ -98,6 +98,33 @@
                                 <input type="number" class="form-control" min="1" @bind="quantity" />
                             </div>
 
+                            @if (availableToppings != null && availableToppings.Any())
+                            {
+                                <div class="form-group mt-2">
+                                    <label>Toppings:</label>
+                                    <div class="border rounded p-2">
+                                        @foreach (var topping in availableToppings)
+                                        {
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       id="topping-@topping.ToppingId"
+                                                       @onchange="(e) => ToggleTopping(topping.ToppingId, e.Value)"
+                                                       checked="@IsToppingSelected(topping.ToppingId)" />
+                                                <label class="form-check-label d-flex justify-content-between" for="topping-@topping.ToppingId">
+                                                    <span>@topping.ToppingName</span>
+                                                    <span class="text-muted">@string.Format("{0:N0} đ", topping.Price)</span>
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="form-group mt-2">
+                                <label>Special Instructions:</label>
+                                <textarea class="form-control" rows="2" @bind="specialInstructions" placeholder="Any special requests..."></textarea>
+                            </div>
+
                             <div class="form-group mt-3">
                                 <button class="btn btn-success" @onclick="AddToOrder"
                                         disabled="@(selectedProductSizeId == 0)">
@@ -116,11 +143,26 @@
                         <ul class="list-group">
                             @foreach (var item in orderItems)
                             {
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    @item.ProductSize.Product.ProductName (@item.ProductSize.Size.SizeName) × @item.Quantity
-                                    <span>
-                                        @string.Format("{0:N0} đ", item.UnitPrice * item.Quantity)
-                                    </span>
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>@item.ProductSize.Product.ProductName (@item.ProductSize.Size.SizeName) × @item.Quantity</span>
+                                        <span>@string.Format("{0:N0} đ", item.Subtotal)</span>
+                                    </div>
+
+                                    @if (item.OrderItemToppings.Any())
+                                    {
+                                        <div class="small text-muted mt-1">
+                                            <span>Toppings: </span>
+                                            @string.Join(", ", item.OrderItemToppings.Select(t => t.Topping.ToppingName))
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(item.SpecialInstructions))
+                                    {
+                                        <div class="small text-muted mt-1">
+                                            <span>Instructions: </span>@item.SpecialInstructions
+                                        </div>
+                                    }
                                 </li>
                             }
                         </ul>
