@@ -30,7 +30,7 @@ namespace PRN222.Assignment.Razor.Admin.Components.Milktea
             }
 
             // Using service to get the milk tea product by id
-            MilkTeaProduct = _milkTeaProductService.GetMilkTeaProductById(id.Value);
+            MilkTeaProduct = _milkTeaProductService.GetById(id.Value);
 
             if (MilkTeaProduct == null)
             {
@@ -48,7 +48,7 @@ namespace PRN222.Assignment.Razor.Admin.Components.Milktea
             }
 
             // Using service to get the milk tea product by id and delete
-            MilkTeaProduct = _milkTeaProductService.GetMilkTeaProductById(id.Value);
+            MilkTeaProduct = _milkTeaProductService.GetById(id.Value);
 
             if (MilkTeaProduct != null)
             {

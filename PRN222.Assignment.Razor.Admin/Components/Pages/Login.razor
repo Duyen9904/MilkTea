@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using PRN222.Assignment.Repositories.Entities
 @using PRN222.Assignment.Services
-@using PRN222.Assignment.Services.Interfaces;
+@using PRN222.Assignment.Services.Interfaces
 @using System.ComponentModel.DataAnnotations
 @inject IAccountService CustomerService
 @inject NavigationManager Navigation
@@ -10,7 +10,7 @@
 <PageTitle>Login</PageTitle>
 <h3>Login</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -42,14 +42,22 @@
 
     private async Task HandleLogin()
     {
-        var account = await CustomerService.Login(loginModel.Email, loginModel.Password);
-        if (account != null)
+        // Check if the model is valid before attempting login
+        if (!string.IsNullOrEmpty(loginModel.Email) && !string.IsNullOrEmpty(loginModel.Password))
         {
-            Navigation.NavigateTo("/home");
+            var account = await CustomerService.Login(loginModel.Email, loginModel.Password);
+            if (account != null)
+            {
+                Navigation.NavigateTo("/home");
+            }
+            else
+            {
+                errorMessage = "Email hoặc mật khẩu không đúng!";
+            }
         }
         else
         {
-            errorMessage = "Email hoặc mật khẩu không đúng!";
+            errorMessage = "Vui lòng điền đầy đủ thông tin!";
         }
     }
 

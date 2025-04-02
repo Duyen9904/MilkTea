@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using PRN222.Assignment.Repositories.Entities;
 
 namespace PRN222.Assignment.Repositories.Repositories.Interface
 {
@@ -37,5 +38,7 @@ namespace PRN222.Assignment.Repositories.Repositories.Interface
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate);
+
+       // Task<List<MilkTeaProduct>> Search(string productName, string description, string category);
     }
 }

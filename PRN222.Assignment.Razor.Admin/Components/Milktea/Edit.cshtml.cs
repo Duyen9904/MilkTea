@@ -33,7 +33,7 @@ namespace PRN222.Assignment.Razor.Admin.Components.Milktea
             }
 
             // Use the service to get the MilkTeaProduct by id
-            MilkTeaProduct = _milkTeaProductService.GetMilkTeaProductById(id.Value);
+            MilkTeaProduct = _milkTeaProductService.GetById(id.Value);
 
             if (MilkTeaProduct == null)
             {
@@ -75,7 +75,7 @@ namespace PRN222.Assignment.Razor.Admin.Components.Milktea
 
         private bool MilkTeaProductExists(int id)
         {
-            return _milkTeaProductService.GetMilkTeaProductById(id) != null;
+            return _milkTeaProductService.GetById(id) != null;
         }
     }
 }

@@ -29,7 +29,7 @@ namespace PRN222.Assignment.Razor.Admin.Components.Milktea
             }
 
             // Using the service to get the MilkTeaProduct by id
-            MilkTeaProduct = _milkTeaProductService.GetMilkTeaProductById(id.Value);
+            MilkTeaProduct = _milkTeaProductService.GetById(id.Value);
 
             if (MilkTeaProduct == null)
             {
