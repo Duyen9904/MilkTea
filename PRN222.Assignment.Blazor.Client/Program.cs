@@ -43,6 +43,8 @@ builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IToppingService, ToppingService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 
+builder.Services.AddScoped<IClientOrderService, ClientOrderService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,111 +1,248 @@
-﻿@page "/order"
+﻿@* path PRN222.Assignment.Blazor.Client/Components/Pages/Order.razor *@
+@page "/order"
+@rendermode InteractiveServer
 @using PRN222.Assignment.Repositories.Entities
 @using PRN222.Assignment.Services.Interfaces
-@inject IMilkTeaProductService MilkTeaProductService
-@inject IProductSizeService ProductSizeService
+@inject IClientOrderService ClientOrderService
+@inject NavigationManager NavigationManager
 
-<h3 class="text-xl font-semibold mb-4">Order Milk Tea</h3>
+<div class="container mt-4">
+    <h2>Create Your Order</h2>
 
-@if (products == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <div class="grid grid-cols-2 gap-4">
-        @foreach (var product in products)
-        {
-            <div class="p-4 border rounded shadow">
-                <div class="flex flex-col gap-2">
-                    <!-- Product Info -->
-                    <div>
-                        <h4 class="font-bold">@product.ProductName</h4>
-                        <p class="text-sm text-gray-500">@product.Description</p>
-                        <p class="text-green-600 font-semibold">@product.BasePrice.ToString("N0") đ</p>
-                    </div>
-
-                    <!-- Size Buttons -->
-                    @if (productSizes.TryGetValue(product.ProductId, out var sizes))
-                    {
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            @foreach (var size in sizes)
-                            {
-                                var selected = selectedSizes.TryGetValue(product.ProductId, out var sel) && sel == size;
-                                <button class=@($"px-3 py-1 rounded border {(selected ? "bg-blue-500 text-white" : "bg-white text-gray-700 border-gray-300")}")
-                                        @onclick="@(() => SelectSize(product.ProductId, size))">
-                                    @size
+    <div class="row mt-3">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        @foreach (var category in categories)
+                        {
+                            <li class="nav-item">
+                                <button class="nav-link @(selectedCategoryId == category.CategoryId ? "active" : "")"
+                                        @onclick="() => SelectCategory(category.CategoryId)">
+                                    @category.CategoryName
                                 </button>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @if (products == null)
+                        {
+                            <p>Loading products...</p>
+                        }
+                        else if (!products.Any())
+                        {
+                            <p>No products available in this category.</p>
+                        }
+                        else
+                        {
+                            @foreach (var product in products)
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        @if (!string.IsNullOrEmpty(product.ImagePath))
+                                        {
+                                            <img src="@product.ImagePath" class="card-img-top" alt="@product.ProductName" style="height: 150px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                                <span class="text-muted">No Image</span>
+                                            </div>
+                                        }
+                                        <div class="card-body">
+                                            <h5 class="card-title">@product.ProductName</h5>
+                                            <p class="card-text small">@(product.Description ?? "No description available")</p>
+                                            <p class="card-text"><strong>Base Price: $@product.BasePrice.ToString("0.00")</strong></p>
+                                            <button class="btn btn-primary btn-sm" @onclick="() => SelectProduct(product)">
+                                                Select
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-sm text-gray-400 italic">No sizes</div>
-                    }
-
-                    <!-- Add Button -->
-                    <div class="mt-3">
-                        <button class="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
-                                disabled="@(!selectedSizes.ContainsKey(product.ProductId))"
-                                @onclick="() => AddToOrder(product.ProductId)">
-                            Add
-                        </button>
+                        }
                     </div>
                 </div>
             </div>
-        }
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Your Order</h5>
+                </div>
+                <div class="card-body">
+                    @if (selectedProduct != null)
+                    {
+                        <div class="selected-product mb-3 p-2 border rounded">
+                            <h6>@selectedProduct.ProductName</h6>
+
+                            <div class="form-group mt-2">
+                                <label>Select Size:</label>
+                                <select class="form-control" @bind="selectedProductSizeId">
+                                    <option value="0">-- Select Size --</option>
+                                    @foreach (var productSize in productSizes)
+                                    {
+                                        <option value="@productSize.ProductSizeId">
+                                            @productSize.Size.SizeName - $@productSize.Price.ToString("0.00")
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="form-group mt-2">
+                                <label>Quantity:</label>
+                                <input type="number" class="form-control" min="1" @bind="quantity" />
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <button class="btn btn-success" @onclick="AddToOrder"
+                                        disabled="@(selectedProductSizeId == 0)">
+                                    Add to Order
+                                </button>
+                                <button class="btn btn-outline-secondary" @onclick="CancelSelection">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                    @if (orderItems.Any())
+                    {
+                        <h6>Order Items:</h6>
+                        <ul class="list-group">
+                            @foreach (var item in orderItems)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @item.ProductSize.Product.ProductName (@item.ProductSize.Size.SizeName) × @item.Quantity
+                                    <span>$@(item.UnitPrice * item.Quantity)</span>
+                                </li>
+                            }
+                        </ul>
+
+                        <div class="mt-3">
+                            <p class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <strong>$@subtotal.ToString("0.00")</strong>
+                            </p>
+                        </div>
+
+                        <button class="btn btn-primary w-100 mt-3">
+                            Proceed to Checkout
+                        </button>
+                    }
+                    else if (selectedProduct == null)
+                    {
+                        <p class="text-muted">Select products to add to your order.</p>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
-}
+</div>
 
 @code {
-    private List<MilkTeaProduct>? products;
-    private Dictionary<int, List<string>> productSizes = new();
-    private Dictionary<int, string> selectedSizes = new();
+    private List<Category> categories = new List<Category>();
+    private List<MilkTeaProduct> products = new List<MilkTeaProduct>();
+    private List<ProductSize> productSizes = new List<ProductSize>();
+    private int selectedCategoryId = 0;
+    private MilkTeaProduct selectedProduct;
+    private int selectedProductSizeId = 0;
+    private int quantity = 1;
+
+    // Order data
+    private PRN222.Assignment.Repositories.Entities.Order currentOrder = new PRN222.Assignment.Repositories.Entities.Order
+        {
+            AccountId = 2,
+            OrderDate = DateTime.Now,
+            Status = "Pending",
+            PaymentStatus = "Pending",
+            PaymentMethod = "Cash",
+            DeliveryAddress = "",
+            Subtotal = 0,
+            Tax = 0,
+            DeliveryFee = 0,
+            TotalAmount = 0
+        };
+
+    private List<OrderItem> orderItems = new List<OrderItem>();
+    private decimal subtotal = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        products = MilkTeaProductService.GetMilkTeaProducts();
+        // Load categories
+        var allCategories = await ClientOrderService.GetAllCategoriesAsync();
+        categories = allCategories.ToList();
 
-        foreach (var product in products)
+        if (categories.Any())
         {
-            var sizes = await ProductSizeService.GetProductSizesByProductIdAsync(product.ProductId);
-            productSizes[product.ProductId] = sizes
-                .Select(ps => ps.Size.SizeName)
-                .Distinct()
-                .ToList();
+            selectedCategoryId = categories.First().CategoryId;
+            await LoadProductsByCategory(selectedCategoryId);
         }
     }
 
-    private void SelectSize(int productId, string size)
+    private async Task SelectCategory(int categoryId)
     {
-        selectedSizes[productId] = size;
+        selectedCategoryId = categoryId;
+        await LoadProductsByCategory(categoryId);
     }
 
-    private void AddToOrder(int productId)
+    private async Task LoadProductsByCategory(int categoryId)
     {
-        var product = products?.FirstOrDefault(p => p.ProductId == productId);
-        if (product != null && selectedSizes.TryGetValue(productId, out var size))
-        {
-            // This is where you would handle adding to cart/order
-            Console.WriteLine($"Added {product.ProductName} - Size: {size}");
+        products = (await ClientOrderService.GetMilkTeaProductsByCategoryAsync(categoryId)).ToList();
+    }
 
-            // Show notification (replace with real toast system if available)
-            _ = Task.Run(async () =>
+    private async Task SelectProduct(MilkTeaProduct product)
+    {
+        selectedProduct = product;
+        selectedProductSizeId = 0;
+        quantity = 1;
+
+        // Load product sizes
+        productSizes = (await ClientOrderService.GetProductSizesByProductIdAsync(product.ProductId)).ToList();
+
+        // Load size details for each product size
+        foreach (var productSize in productSizes)
+        {
+            productSize.Size = await ClientOrderService.GetSizeByIdAsync(productSize.SizeId);
+        }
+    }
+
+    private void CancelSelection()
+    {
+        selectedProduct = null;
+        selectedProductSizeId = 0;
+        productSizes.Clear();
+    }
+
+    private async Task AddToOrder()
+    {
+        if (selectedProductSizeId == 0 || quantity < 1)
+            return;
+
+        var productSize = productSizes.FirstOrDefault(ps => ps.ProductSizeId == selectedProductSizeId);
+        if (productSize == null)
+            return;
+
+        // Create new order item (not persisted to database yet)
+        var orderItem = new OrderItem
             {
-                await InvokeAsync(() =>
-                    ToastMessage = $"✔️ Added {product.ProductName} ({size}) to order!");
-                await Task.Delay(3000);
-                await InvokeAsync(() => ToastMessage = null);
-            });
-        }
+                OrderId = 0, // Temporary, will be set when order is created
+                ProductSizeId = selectedProductSizeId,
+                ProductSize = productSize, // For display purposes
+                Quantity = quantity,
+                UnitPrice = productSize.Price,
+                Subtotal = productSize.Price * quantity
+            };
+
+        orderItems.Add(orderItem);
+
+        // Update subtotal
+        subtotal += (decimal)(orderItem.Subtotal ?? 0);
+
+        // Reset selection
+        CancelSelection();
     }
-
-    private string? ToastMessage;
-}
-
-@if (!string.IsNullOrEmpty(ToastMessage))
-{
-    <div class="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow">
-        @ToastMessage
-    </div>
 }

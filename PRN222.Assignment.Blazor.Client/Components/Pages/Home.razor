@@ -1,13 +1,62 @@
 ﻿@* 
-Home.razor
+ path PRN222.Assignment.Blazor.Client/Components/Pages/Home.razor 
 *@
-
 @page "/"
+@rendermode InteractiveServer
+@using PRN222.Assignment.Repositories.Entities
+@using PRN222.Assignment.Services.Interfaces
+@inject NavigationManager NavigationManager
+@inject IClientOrderService ClientOrderService
+
+
 
 <PageTitle>Home</PageTitle>
+<div class="container mt-4">
+    <h1>Milk Tea Shop</h1>
 
-<h1>Milktea Shop</h1>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <button class="btn btn-primary" @onclick="CreateNewOrder">Create New Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<NavLink href="/order" class="text-blue-500 hover:underline">
-    👉 Go to Order Page
-</NavLink>
+
+@code {
+    private string message = "No message";
+
+    private void DidNothing(){
+        message = "Edited";
+        Console.WriteLine("Did nothing!");
+        StateHasChanged();
+    }
+    private async Task CreateNewOrder()
+    {
+        Console.WriteLine("CreateNewOrder method called!");
+
+        // Create a new order with initial values
+        var newOrder = new Repositories.Entities.Order
+            {
+                AccountId = 2, // Hard-coded account ID as specified
+                OrderDate = DateTime.Now,
+                Status = "Pending",
+                PaymentStatus = "Pending",
+                PaymentMethod = "Cash", // Default
+                DeliveryAddress = "", // Will be filled later
+                Subtotal = 0,
+                Tax = 0,
+                DeliveryFee = 0,
+                TotalAmount = 0
+            };
+
+        Console.WriteLine($"Order created: AccountId = {newOrder.AccountId}, Status = {newOrder.Status}");
+
+        // Store the order in session or navigate with parameters
+        // We'll use NavigationManager to navigate to the order page
+        NavigationManager.NavigateTo("/order"); // <- Use forceLoad for client-side nav issues
+    }
+}
