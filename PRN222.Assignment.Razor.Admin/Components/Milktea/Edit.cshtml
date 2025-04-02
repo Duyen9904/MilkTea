@@ -1,0 +1,70 @@
+﻿@page
+@model PRN222.Assignment.Razor.Admin.Components.Milktea.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>MilkTeaProduct</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MilkTeaProduct.ProductId" />
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.ProductName" class="control-label"></label>
+                <input asp-for="MilkTeaProduct.ProductName" class="form-control" />
+                <span asp-validation-for="MilkTeaProduct.ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.CategoryId" class="control-label"></label>
+                <select asp-for="MilkTeaProduct.CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <span asp-validation-for="MilkTeaProduct.CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.Description" class="control-label"></label>
+                <input asp-for="MilkTeaProduct.Description" class="form-control" />
+                <span asp-validation-for="MilkTeaProduct.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.BasePrice" class="control-label"></label>
+                <input asp-for="MilkTeaProduct.BasePrice" class="form-control" />
+                <span asp-validation-for="MilkTeaProduct.BasePrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.ImagePath" class="control-label"></label>
+                <input asp-for="MilkTeaProduct.ImagePath" class="form-control" />
+                <span asp-validation-for="MilkTeaProduct.ImagePath" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="MilkTeaProduct.IsAvailable" /> @Html.DisplayNameFor(model => model.MilkTeaProduct.IsAvailable)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.CreatedDate" class="control-label"></label>
+                <input asp-for="MilkTeaProduct.CreatedDate" class="form-control" />
+                <span asp-validation-for="MilkTeaProduct.CreatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MilkTeaProduct.LastModified" class="control-label"></label>
+                <input asp-for="MilkTeaProduct.LastModified" class="form-control" />
+                <span asp-validation-for="MilkTeaProduct.LastModified" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -37,7 +37,8 @@ namespace PRN222.Assignment.Services.Implementations
 
         public List<MilkTeaProduct> GetMilkTeaProducts()
         {
-            return _unitOfWork.MilkTeaProducts.GetAll().ToList();
+            return _unitOfWork.MilkTeaProducts.GetAll(
+           includes: m => m.Category).ToList();
         }
 
         public void UpdateMilkTeaProduct(MilkTeaProduct milkTeaProduct)
