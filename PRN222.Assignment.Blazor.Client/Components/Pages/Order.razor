@@ -1,10 +1,7 @@
 ﻿@* path PRN222.Assignment.Blazor.Client/Components/Pages/Order.razor *@
 @page "/order"
 @rendermode InteractiveServer
-@using PRN222.Assignment.Repositories.Entities
-@using PRN222.Assignment.Services.Interfaces
-@inject IClientOrderService ClientOrderService
-@inject NavigationManager NavigationManager
+@inherits OrderBase
 
 <div class="container mt-4">
     <h2>Tạo Order</h2>
@@ -150,107 +147,3 @@
         </div>
     </div>
 </div>
-
-@code {
-    private List<Category> categories = new List<Category>();
-    private List<MilkTeaProduct> products = new List<MilkTeaProduct>();
-    private List<ProductSize> productSizes = new List<ProductSize>();
-    private int selectedCategoryId = 0;
-    private MilkTeaProduct selectedProduct;
-    private int selectedProductSizeId = 0;
-    private int quantity = 1;
-
-    // Order data
-    private PRN222.Assignment.Repositories.Entities.Order currentOrder = new PRN222.Assignment.Repositories.Entities.Order
-        {
-            AccountId = 2,
-            OrderDate = DateTime.Now,
-            Status = "Pending",
-            PaymentStatus = "Pending",
-            PaymentMethod = "Cash",
-            DeliveryAddress = "",
-            Subtotal = 0,
-            Tax = 0,
-            DeliveryFee = 0,
-            TotalAmount = 0
-        };
-
-    private List<OrderItem> orderItems = new List<OrderItem>();
-    private decimal subtotal = 0;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Load categories
-        var allCategories = await ClientOrderService.GetAllCategoriesAsync();
-        categories = allCategories.ToList();
-
-        if (categories.Any())
-        {
-            selectedCategoryId = categories.First().CategoryId;
-            await LoadProductsByCategory(selectedCategoryId);
-        }
-    }
-
-    private async Task SelectCategory(int categoryId)
-    {
-        selectedCategoryId = categoryId;
-        await LoadProductsByCategory(categoryId);
-    }
-
-    private async Task LoadProductsByCategory(int categoryId)
-    {
-        products = (await ClientOrderService.GetMilkTeaProductsByCategoryAsync(categoryId)).ToList();
-    }
-
-    private async Task SelectProduct(MilkTeaProduct product)
-    {
-        selectedProduct = product;
-        selectedProductSizeId = 0;
-        quantity = 1;
-
-        // Load product sizes
-        productSizes = (await ClientOrderService.GetProductSizesByProductIdAsync(product.ProductId)).ToList();
-
-        // Load size details for each product size
-        foreach (var productSize in productSizes)
-        {
-            productSize.Size = await ClientOrderService.GetSizeByIdAsync(productSize.SizeId);
-        }
-    }
-
-    private void CancelSelection()
-    {
-        selectedProduct = null;
-        selectedProductSizeId = 0;
-        productSizes.Clear();
-    }
-
-    private async Task AddToOrder()
-    {
-        if (selectedProductSizeId == 0 || quantity < 1)
-            return;
-
-        var productSize = productSizes.FirstOrDefault(ps => ps.ProductSizeId == selectedProductSizeId);
-        if (productSize == null)
-            return;
-
-        // Create new order item (not persisted to database yet)
-        var orderItem = new OrderItem
-            {
-                OrderId = 0, // Temporary, will be set when order is created
-                ProductSizeId = selectedProductSizeId,
-                ProductSize = productSize, // For display purposes
-                Quantity = quantity,
-                UnitPrice = productSize.Price,
-                Subtotal = productSize.Price * quantity
-            };
-
-        orderItems.Add(orderItem);
-
-        // Update subtotal
-        subtotal += (decimal)(orderItem.Subtotal ?? 0);
-
-        // Reset selection
-        CancelSelection();
-    }
-}
