@@ -8,6 +8,8 @@ using PRN222.Assignment.Services.CustomerService;
 using PRN222.Assignment.Services.Interfaces;
 using PRN222.Assignment.Services.Implementations;
 using PRN222.Assignment.Blazor.Client.Components.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,15 +18,34 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddDbContext<MilkTeaShopContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/login";       // Path to your login page
-        options.LogoutPath = "/logout";      // Path to handle logout
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.Cookie.Name = "MilkTeaShopAuth";
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+    options.AccessDeniedPath = "/unauthorized";
+    options.SlidingExpiration = true;
+});
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+
+// Add IHostEnvironmentAuthenticationStateProvider to avoid "Headers are read-only" error
+builder.Services.AddScoped<IHostEnvironmentAuthenticationStateProvider>(sp =>
+    (ServerAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>()
+);
+
+
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

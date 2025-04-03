@@ -1,33 +1,50 @@
-﻿﻿@* 
- path PRN222.Assignment.Blazor.Client/Components/Pages/Home.razor 
-*@
-@page "/"
+﻿@page "/"
 @rendermode InteractiveServer
 @using PRN222.Assignment.Repositories.Entities
 @using PRN222.Assignment.Services.Interfaces
 @inject NavigationManager NavigationManager
 @inject IClientOrderService ClientOrderService
+@inject IHttpContextAccessor HttpContextAccessor
 
+<PageTitle>Milk Tea Shop</PageTitle>
 
-
-<PageTitle>Home</PageTitle>
 <div class="container mt-4">
     <h1>Milk Tea Shop</h1>
-
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <button class="btn btn-primary" @onclick="CreateNewOrder">Create New Order</button>
+                    <button class="btn btn-primary" @onclick="CheckAuthAndCreateOrder">Create New Order</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+@if (showLoginPrompt)
+{
+    <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Authentication Required</h5>
+                    <button type="button" class="btn-close" @onclick="CloseLoginPrompt" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You need to be logged in as staff to create an order.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseLoginPrompt">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="NavigateToLogin">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     private string message = "No message";
+    private bool showLoginPrompt = false;
 
     private void DidNothing()
     {
@@ -35,29 +52,56 @@
         Console.WriteLine("Did nothing!");
         StateHasChanged();
     }
+
+    private void CheckAuthAndCreateOrder()
+    {
+        var user = HttpContextAccessor.HttpContext?.User;
+        bool isAuthenticated = user?.Identity?.IsAuthenticated ?? false;
+        bool isStaff = user?.IsInRole("STAFF") ?? false;
+        bool isAdmin = user?.IsInRole("ADMIN") ?? false;
+
+        if (isAuthenticated && (isStaff || isAdmin))
+        {
+            CreateNewOrder();
+        }
+        else
+        {
+            // Show login prompt
+            showLoginPrompt = true;
+        }
+    }
+
     private async Task CreateNewOrder()
     {
         Console.WriteLine("CreateNewOrder method called!");
-
         // Create a new order with initial values
         var newOrder = new Repositories.Entities.Order
-            {
-                AccountId = 2, // Hard-coded account ID as specified
-                OrderDate = DateTime.Now,
-                Status = "Pending",
-                PaymentStatus = "Pending",
-                PaymentMethod = "Cash", // Default
-                DeliveryAddress = "", // Will be filled later
-                Subtotal = 0,
-                Tax = 0,
-                DeliveryFee = 0,
-                TotalAmount = 0
-            };
-
+        {
+            AccountId = 2, // Hard-coded account ID as specified
+            OrderDate = DateTime.Now,
+            Status = "Pending",
+            PaymentStatus = "Pending",
+            PaymentMethod = "Cash", // Default
+            DeliveryAddress = "", // Will be filled later
+            Subtotal = 0,
+            Tax = 0,
+            DeliveryFee = 0,
+            TotalAmount = 0
+        };
         Console.WriteLine($"Order created: AccountId = {newOrder.AccountId}, Status = {newOrder.Status}");
-
         // Store the order in session or navigate with parameters
         // We'll use NavigationManager to navigate to the order page
-        NavigationManager.NavigateTo("/index"); // <- Use forceLoad for client-side nav issues
+        NavigationManager.NavigateTo("/index");
+    }
+
+    private void CloseLoginPrompt()
+    {
+        showLoginPrompt = false;
+    }
+
+    private void NavigateToLogin()
+    {
+        // Store the return URL to come back after login
+        NavigationManager.NavigateTo("/login?returnUrl=/");
     }
 }
