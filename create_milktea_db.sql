@@ -1,5 +1,4 @@
 -- Check if the database exists and drop it if it does
-
 USE [master];
 GO
 
@@ -115,22 +114,20 @@ CREATE TABLE [OrderItemTopping] (
     CONSTRAINT [UQ_OrderItemTopping] UNIQUE ([order_item_id], [topping_id])
 );
 
-
-
 -- Transaction History (Self-contained, no foreign keys)
 CREATE TABLE [Transaction] (
     [transaction_id] INT IDENTITY(1,1) PRIMARY KEY,
-    [account_id] INT NOT NULL, -- Store as plain integer, no FK
+    [processed_by] INT NULL, -- Store as plain integer
     [amount] MONEY NOT NULL,
     [transaction_type] NVARCHAR(20) NOT NULL CHECK ([transaction_type] IN ('Payment', 'Refund', 'Adjustment', 'Deposit')),
     [description] NVARCHAR(255) NULL,
-    [order_id] INT NULL, -- Store as plain integer, no FK
+    [order_id] INT NULL, -- Store as plain integer
     [transaction_date] DATETIME NOT NULL DEFAULT GETDATE(),
-    [processed_by] INT NULL -- Store as plain integer, no FK
+
+    -- Adding foreign key constraints
+    CONSTRAINT FK_Transaction_Order FOREIGN KEY (order_id) REFERENCES [Order]([order_id]),
+    CONSTRAINT FK_Transaction_ProcessedBy FOREIGN KEY (processed_by) REFERENCES [Account]([account_id])
 );
-
-
-
 
 -- Combo Table
 CREATE TABLE [Combo] (
