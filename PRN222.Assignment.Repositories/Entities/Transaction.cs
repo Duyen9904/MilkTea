@@ -7,7 +7,7 @@ public partial class Transaction
 {
     public int TransactionId { get; set; }
 
-    public int AccountId { get; set; }
+    public int? ProcessedBy { get; set; }
 
     public decimal Amount { get; set; }
 
@@ -19,5 +19,7 @@ public partial class Transaction
 
     public DateTime TransactionDate { get; set; }
 
-    public int? ProcessedBy { get; set; }
+    public virtual Order? Order { get; set; }
+
+    public virtual Account? ProcessedByNavigation { get; set; }
 }

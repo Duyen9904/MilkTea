@@ -94,7 +94,7 @@ namespace PRN222.Assignment.Services.Implementations
         public IEnumerable<Transaction> GetTransactionsByAccountId(int accountId)
         {
             return _unitOfWork.Transactions.GetAll(
-                t => t.AccountId == accountId,
+                t => t.ProcessedBy == accountId,
                 q => q.OrderByDescending(t => t.TransactionDate)
             );
         }
@@ -102,7 +102,7 @@ namespace PRN222.Assignment.Services.Implementations
         public async Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(int accountId)
         {
             return await _unitOfWork.Transactions.GetAllAsync(
-                t => t.AccountId == accountId,
+                t => t.ProcessedBy == accountId,
                 q => q.OrderByDescending(t => t.TransactionDate)
             );
         }
@@ -125,7 +125,7 @@ namespace PRN222.Assignment.Services.Implementations
 
         public decimal GetAccountBalance(int accountId)
         {
-            var transactions = _unitOfWork.Transactions.GetAll(t => t.AccountId == accountId);
+            var transactions = _unitOfWork.Transactions.GetAll(t => t.ProcessedBy == accountId);
 
             decimal balance = 0;
             foreach (var transaction in transactions)
@@ -145,7 +145,7 @@ namespace PRN222.Assignment.Services.Implementations
 
         public async Task<decimal> GetAccountBalanceAsync(int accountId)
         {
-            var transactions = await _unitOfWork.Transactions.GetAllAsync(t => t.AccountId == accountId);
+            var transactions = await _unitOfWork.Transactions.GetAllAsync(t => t.ProcessedBy == accountId);
 
             decimal balance = 0;
             foreach (var transaction in transactions)

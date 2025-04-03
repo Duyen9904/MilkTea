@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace PRN222.Assignment.Repositories.Entities;
 
@@ -41,15 +42,25 @@ public partial class MilkTeaShopContext : DbContext
 
     public virtual DbSet<Transaction> Transactions { get; set; }
 
+    private string GetConnectionString()
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true).Build();
+        return configuration["ConnectionStrings:DefaultConnection"];
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;database=MilkTeaShop;TrustServerCertificate=True;Trusted_Connection=True");
+    {
+        optionsBuilder.UseSqlServer(GetConnectionString());
+    }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Account__46A222CD7B95EBE3");
+            entity.HasKey(e => e.AccountId).HasName("PK__Account__46A222CD0350A74D");
 
             entity.ToTable("Account");
 
@@ -92,7 +103,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.CategoryId).HasName("PK__Category__D54EE9B43269DD98");
+            entity.HasKey(e => e.CategoryId).HasName("PK__Category__D54EE9B47B0FEDBE");
 
             entity.ToTable("Category");
 
@@ -107,7 +118,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Combo>(entity =>
         {
-            entity.HasKey(e => e.ComboId).HasName("PK__Combo__18F74AA3C0EEC8EB");
+            entity.HasKey(e => e.ComboId).HasName("PK__Combo__18F74AA31CC2737D");
 
             entity.ToTable("Combo");
 
@@ -135,7 +146,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<ComboItem>(entity =>
         {
-            entity.HasKey(e => e.ComboItemId).HasName("PK__ComboIte__A1CBC08751C5BBAF");
+            entity.HasKey(e => e.ComboItemId).HasName("PK__ComboIte__A1CBC087774AB7ED");
 
             entity.ToTable("ComboItem");
 
@@ -151,17 +162,17 @@ public partial class MilkTeaShopContext : DbContext
             entity.HasOne(d => d.Combo).WithMany(p => p.ComboItems)
                 .HasForeignKey(d => d.ComboId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ComboItem__combo__6C190EBB");
+                .HasConstraintName("FK__ComboItem__combo__6E01572D");
 
             entity.HasOne(d => d.ProductSize).WithMany(p => p.ComboItems)
                 .HasForeignKey(d => d.ProductSizeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ComboItem__produ__6D0D32F4");
+                .HasConstraintName("FK__ComboItem__produ__6EF57B66");
         });
 
         modelBuilder.Entity<MilkTeaProduct>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__MilkTeaP__47027DF53B0F8AEC");
+            entity.HasKey(e => e.ProductId).HasName("PK__MilkTeaP__47027DF5C2732F48");
 
             entity.ToTable("MilkTeaProduct");
 
@@ -199,7 +210,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("PK__Order__465962292F632D87");
+            entity.HasKey(e => e.OrderId).HasName("PK__Order__465962296D3DE133");
 
             entity.ToTable("Order");
 
@@ -252,7 +263,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<OrderCombo>(entity =>
         {
-            entity.HasKey(e => e.OrderComboId).HasName("PK__OrderCom__34BF1CD7F5E9113D");
+            entity.HasKey(e => e.OrderComboId).HasName("PK__OrderCom__34BF1CD7025A823B");
 
             entity.ToTable("OrderCombo");
 
@@ -271,17 +282,17 @@ public partial class MilkTeaShopContext : DbContext
             entity.HasOne(d => d.Combo).WithMany(p => p.OrderCombos)
                 .HasForeignKey(d => d.ComboId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__OrderComb__combo__72C60C4A");
+                .HasConstraintName("FK__OrderComb__combo__74AE54BC");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderCombos)
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__OrderComb__order__71D1E811");
+                .HasConstraintName("FK__OrderComb__order__73BA3083");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(e => e.OrderItemId).HasName("PK__OrderIte__3764B6BC1B691DCE");
+            entity.HasKey(e => e.OrderItemId).HasName("PK__OrderIte__3764B6BC1342B8F4");
 
             entity.ToTable("OrderItem");
 
@@ -315,7 +326,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<OrderItemTopping>(entity =>
         {
-            entity.HasKey(e => e.OrderItemToppingId).HasName("PK__OrderIte__7DCEF815AC26FE62");
+            entity.HasKey(e => e.OrderItemToppingId).HasName("PK__OrderIte__7DCEF8150734AD82");
 
             entity.ToTable("OrderItemTopping");
 
@@ -341,7 +352,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<ProductSize>(entity =>
         {
-            entity.HasKey(e => e.ProductSizeId).HasName("PK__ProductS__062A9A68C4ECB964");
+            entity.HasKey(e => e.ProductSizeId).HasName("PK__ProductS__062A9A6824D3EABB");
 
             entity.ToTable("ProductSize");
 
@@ -367,7 +378,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Size>(entity =>
         {
-            entity.HasKey(e => e.SizeId).HasName("PK__Size__0DCACE31633A47B4");
+            entity.HasKey(e => e.SizeId).HasName("PK__Size__0DCACE3106488F58");
 
             entity.ToTable("Size");
 
@@ -382,7 +393,7 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Topping>(entity =>
         {
-            entity.HasKey(e => e.ToppingId).HasName("PK__Topping__141E1E06ED2A4DD5");
+            entity.HasKey(e => e.ToppingId).HasName("PK__Topping__141E1E060DF4A1D3");
 
             entity.ToTable("Topping");
 
@@ -406,12 +417,11 @@ public partial class MilkTeaShopContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__85C600AF3AB08DD5");
+            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__85C600AF8DBB1DF1");
 
             entity.ToTable("Transaction");
 
             entity.Property(e => e.TransactionId).HasColumnName("transaction_id");
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.Amount)
                 .HasColumnType("money")
                 .HasColumnName("amount");
@@ -427,6 +437,14 @@ public partial class MilkTeaShopContext : DbContext
             entity.Property(e => e.TransactionType)
                 .HasMaxLength(20)
                 .HasColumnName("transaction_type");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_Transaction_Order");
+
+            entity.HasOne(d => d.ProcessedByNavigation).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.ProcessedBy)
+                .HasConstraintName("FK_Transaction_ProcessedBy");
         });
 
         OnModelCreatingPartial(modelBuilder);

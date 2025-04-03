@@ -28,4 +28,6 @@ public partial class Account
     public virtual ICollection<Order> OrderAccounts { get; set; } = new List<Order>();
 
     public virtual ICollection<Order> OrderProcessedByNavigations { get; set; } = new List<Order>();
+
+    public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

@@ -1,0 +1,55 @@
+﻿@page
+@model PRN222.Assignment.Razor.Admin.Components.Milktea.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row mb-3">
+    <!-- Navigation Link to ComboOrder -->
+    <div class="col-md-4">
+        <a class="btn btn-primary" asp-page="/ComboOrder/Index">View Combo Orders</a>
+    </div>
+    <!-- Link to create a new item -->
+    <div class="col-md-4">
+        <a class="btn btn-success" asp-page="Create">Create New Product</a>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].ProductName)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].Description)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].BasePrice)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].ImagePath)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].IsAvailable)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].CreatedDate)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].LastModified)</th>
+            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].Category)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.MilkTeaProduct)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.BasePrice)</td>
+                <td>@Html.DisplayFor(modelItem => item.ImagePath)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsAvailable)</td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.LastModified)</td>
+                <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-page="./Edit" asp-route-id="@item.ProductId">Edit</a> |
+                    <a class="btn btn-info btn-sm" asp-page="./Details" asp-route-id="@item.ProductId">Details</a> |
+                    <a class="btn btn-danger btn-sm" asp-page="./Delete" asp-route-id="@item.ProductId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
