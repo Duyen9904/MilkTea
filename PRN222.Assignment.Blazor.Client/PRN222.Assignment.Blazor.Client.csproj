@@ -4,10 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ExcludeConfigFilesFromBuildOutput>true</ExcludeConfigFilesFromBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PRN222.Assignment.Services\PRN222.Assignment.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+     <PackageReference Include="bootstrap" Version="5.2.3" ExcludeAssets="ContentFiles" />
+     <PackageReference Include="bootstrap.sass" Version="5.2.3" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,239 @@
+﻿@page "/transactions"
+@inherits TransactionsBase
+@rendermode InteractiveServer
+
+<h3>Transaction History</h3>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <div class="input-group">
+                    <input type="date" class="form-control" @bind="startDate">
+                    <span class="input-group-text">to</span>
+                    <input type="date" class="form-control" @bind="endDate">
+                    <button class="btn btn-primary" @onclick="FilterTransactions">
+                        <i class="bi bi-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="form-check form-switch me-3">
+                    <input class="form-check-input" type="checkbox" id="showCompleted" @bind="showCompleted">
+                    <label class="form-check-label" for="showCompleted">Show Completed Only</label>
+                </div>
+                <button class="btn btn-outline-primary" @onclick="RefreshData">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading transactions...</p>
+            </div>
+        }
+        else if (!transactions.Any())
+        {
+            <div class="text-center py-4">
+                <i class="bi bi-file-earmark-x text-muted" style="font-size: 3rem;"></i>
+                <p class="mt-3">No transactions found</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var transaction in transactions)
+                        {
+                            <tr>
+                                <td>@transaction.OrderId</td>
+                                <td>@transaction.OrderDate.ToString("MM/dd/yyyy HH:mm")</td>
+                                <td>
+                                    @($"{transaction.Account.FirstName} {transaction.Account.LastName}")
+                                    <small class="d-block text-muted">@transaction.Account.Email</small>
+                                </td>
+                                <td>@GetOrderItemSummary(transaction)</td>
+                                <td>@transaction.TotalAmount.ToString("C")</td>
+                                <td>@transaction.PaymentMethod</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(transaction.Status)">
+                                        @transaction.Status
+                                    </span>
+                                    <span class="badge @GetPaymentStatusBadgeClass(transaction.PaymentStatus)">
+                                        @transaction.PaymentStatus
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info" @onclick="() => ViewOrderDetails(transaction)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    @if (transaction.Status == "Pending")
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" @onclick='() => UpdateOrderStatus(transaction.OrderId, "Processing")'>
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    }
+                                    @if (transaction.Status == "Processing")
+                                    {
+                                        <button class="btn btn-sm btn-outline-success" @onclick='() => UpdateOrderStatus(transaction.OrderId, "Completed")'>
+                                            <i class="bi bi-truck"></i>
+                                        </button>
+                                    }
+                                    @if (transaction.Status != "Cancelled" && transaction.Status != "Completed")
+                                    {
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => CancelOrder(transaction.OrderId)">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@if (selectedOrder != null)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order #@selectedOrder.OrderId Details</h5>
+                    <button type="button" class="btn-close" @onclick="CloseOrderDetails"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Customer Information</h6>
+                            <p class="mb-1">
+                                <strong>Name:</strong> @($"{selectedOrder.Account.FirstName} {selectedOrder.Account.LastName}")
+                            </p>
+                            <p class="mb-1"><strong>Email:</strong> @selectedOrder.Account.Email</p>
+                            <p class="mb-1"><strong>Phone:</strong> @selectedOrder.Account.Phone</p>
+                            <p class="mb-1"><strong>Delivery Address:</strong> @selectedOrder.DeliveryAddress</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Order Information</h6>
+                            <p class="mb-1"><strong>Order Date:</strong> @selectedOrder.OrderDate.ToString("MM/dd/yyyy HH:mm")</p>
+                            <p class="mb-1"><strong>Status:</strong> @selectedOrder.Status</p>
+                            <p class="mb-1"><strong>Payment Method:</strong> @selectedOrder.PaymentMethod</p>
+                            <p class="mb-1"><strong>Payment Status:</strong> @selectedOrder.PaymentStatus</p>
+                            @if (!string.IsNullOrEmpty(selectedOrder.Notes))
+                            {
+                                <p class="mb-1"><strong>Notes:</strong> @selectedOrder.Notes</p>
+                            }
+                        </div>
+                    </div>
+
+                    <h6>Order Items</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Size</th>
+                                    <th>Toppings</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in selectedOrder.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.ProductSize.Product.ProductName</td>
+                                        <td>@item.ProductSize.Size.SizeName</td>
+                                        <td>
+                                            @if (item.OrderItemToppings.Any())
+                                            {
+                                                <ul class="list-unstyled mb-0">
+                                                    @foreach (var topping in item.OrderItemToppings)
+                                                    {
+                                                        <li>@topping.Topping.ToppingName (@topping.Price.ToString("C"))</li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <span>No toppings</span>
+                                            }
+                                        </td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@((item.Subtotal ?? 0).ToString("C"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6 offset-md-6">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Subtotal:</td>
+                                        <td class="text-end">@selectedOrder.Subtotal.ToString("C")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tax (10%):</td>
+                                        <td class="text-end">@selectedOrder.Tax.ToString("C")</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Fee:</td>
+                                        <td class="text-end">@selectedOrder.DeliveryFee.ToString("C")</td>
+                                    </tr>
+                                    <tr class="fw-bold">
+                                        <td>Total:</td>
+                                        <td class="text-end">@selectedOrder.TotalAmount.ToString("C")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseOrderDetails">Close</button>
+                    @if (selectedOrder.Status != "Cancelled" && selectedOrder.Status != "Completed")
+                    {
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="updateStatusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Update Status
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="updateStatusDropdown">
+                                <li><button class="dropdown-item" @onclick='() => UpdateOrderStatus(selectedOrder.OrderId, "Processing")'>Processing</button></li>
+                                <li><button class="dropdown-item" @onclick='() => UpdateOrderStatus(selectedOrder.OrderId, "Completed")'>Completed</button></li>
+                                <li><button class="dropdown-item" @onclick='() => UpdateOrderStatus(selectedOrder.OrderId, "Delivered")'>Delivered</button></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><button class="dropdown-item text-danger" @onclick='() => CancelOrder(selectedOrder.OrderId)'>Cancel Order</button></li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PRN222.Assignment.Blazor.Client.ViewModel
+namespace PRN222.Assignment.Blazor.Client.Components.Models.ViewModel
 {
     public class LoginViewModel
     {

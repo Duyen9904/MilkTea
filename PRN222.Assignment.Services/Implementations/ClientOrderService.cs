@@ -28,9 +28,12 @@ namespace PRN222.Assignment.Services.Implementations
 
         public async Task<IEnumerable<MilkTeaProduct>> GetMilkTeaProductsByCategoryAsync(int categoryId)
         {
-            return await _unitOfWork.MilkTeaProducts.GetAllAsync(
-                filter: p => p.IsAvailable && p.CategoryId == categoryId,
-                includes: p => p.Category);
+            var products = await _unitOfWork.MilkTeaProducts.GetAllAsync(
+                filter: p => p.CategoryId == categoryId,
+                includes: p => p.Category
+            );
+
+            return products;
         }
 
         public async Task<MilkTeaProduct> GetMilkTeaProductByIdAsync(int productId)
@@ -213,6 +216,53 @@ namespace PRN222.Assignment.Services.Implementations
             order.PaymentStatus = paymentStatus;
             await _unitOfWork.SaveAsync();
             return true;
+        }
+
+        public Task<IEnumerable<Combo>> GetAllCombosAsync()
+        {
+            return _unitOfWork.Combos.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<ComboItem>> GetComboItemsByComboIdAsync(int comboId)
+        {
+            try
+            {
+                // Use the repository pattern through UnitOfWork to get combo items
+                var comboItems = await _unitOfWork.ComboItems.GetAllAsync(
+                    filter: ci => ci.ComboId == comboId
+                );
+
+                return comboItems;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving combo items: {ex.Message}");
+                return new List<ComboItem>();
+            }
+        }
+
+        // Implement the second required method
+        public async Task<ProductSize> GetProductSizeByIdAsync(int productSizeId)
+        {
+            try
+            {
+                // Get the product size with all its related entities
+                var productSize = await _unitOfWork.ProductSizes.GetByIdAsync(productSizeId);
+
+                if (productSize != null)
+                {
+                    // Load the related product and size information
+                    productSize.Product = await _unitOfWork.MilkTeaProducts.GetByIdAsync(productSize.ProductId);
+                    productSize.Size = await _unitOfWork.Sizes.GetByIdAsync(productSize.SizeId);
+                }
+
+                return productSize;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving product size: {ex.Message}");
+                return null;
+            }
         }
     }
 }

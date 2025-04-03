@@ -1,4 +1,4 @@
-﻿@* 
+﻿﻿@* 
  path PRN222.Assignment.Blazor.Client/Components/Pages/Home.razor 
 *@
 @page "/"
@@ -29,7 +29,8 @@
 @code {
     private string message = "No message";
 
-    private void DidNothing(){
+    private void DidNothing()
+    {
         message = "Edited";
         Console.WriteLine("Did nothing!");
         StateHasChanged();
@@ -57,6 +58,6 @@
 
         // Store the order in session or navigate with parameters
         // We'll use NavigationManager to navigate to the order page
-        NavigationManager.NavigateTo("/order"); // <- Use forceLoad for client-side nav issues
+        NavigationManager.NavigateTo("/index"); // <- Use forceLoad for client-side nav issues
     }
 }

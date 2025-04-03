@@ -1,7 +1,7 @@
 ﻿using PRN222.Assignment.Repositories.Entities;
 using System.Collections.Generic;
 
-namespace PRN222.Assignment.Blazor.Client.Components.Pages
+namespace PRN222.Assignment.Blazor.Client.Components.Services
 {
     public class OrderStateService
     {
@@ -12,7 +12,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             return currentOrderData;
         }
 
-        public void SetOrderData(PRN222.Assignment.Repositories.Entities.Order order, List<OrderItem> orderItems)
+        public void SetOrderData(Order order, List<OrderItem> orderItems)
         {
             currentOrderData = new OrderData
             {
@@ -29,7 +29,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
     public class OrderData
     {
-        public PRN222.Assignment.Repositories.Entities.Order Order { get; set; }
+        public Order Order { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }

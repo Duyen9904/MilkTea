@@ -7,7 +7,7 @@ using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.CustomerService;
 using PRN222.Assignment.Services.Interfaces;
 using PRN222.Assignment.Services.Implementations;
-using PRN222.Assignment.Blazor.Client.Components.Pages;
+using PRN222.Assignment.Blazor.Client.Components.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,0 +1,26 @@
+﻿@rendermode InteractiveServer
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">MilkTea POS</a>
+    </div>
+</div>
+
+<div>
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/index" Match="NavLinkMatch.All">
+                Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="transactions">
+                Transactions
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    // No need for collapse functionality
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using PRN222.Assignment.Blazor.Client.Components.Services;
 using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.Interfaces;
 using System;

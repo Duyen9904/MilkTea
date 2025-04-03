@@ -54,5 +54,11 @@ namespace PRN222.Assignment.Services.Interfaces
 
         // Update payment status
         Task<bool> UpdatePaymentStatusAsync(int orderId, string paymentStatus);
+
+        Task<IEnumerable<Combo>> GetAllCombosAsync();
+        // Add these methods to IClientOrderService.cs
+        Task<IEnumerable<ComboItem>> GetComboItemsByComboIdAsync(int comboId);
+
+        Task<ProductSize> GetProductSizeByIdAsync(int productSizeId);
     }
 }
