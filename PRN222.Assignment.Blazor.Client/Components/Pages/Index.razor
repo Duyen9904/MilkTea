@@ -61,7 +61,7 @@
                                              class="card-img-top" alt="@product.ProductName">
                                         <div class="card-body">
                                             <h5 class="card-title">@product.ProductName</h5>
-                                            <p class="card-text">@product.BasePrice.ToString("C")</p>
+                                            <p class="card-text">@string.Format("{0:N0} đ", product.BasePrice)</p>
                                             <div class="d-grid gap-2">
                                                 <button class="btn btn-primary" @onclick="() => SelectProduct(product)">
                                                     <i class="bi bi-plus-circle"></i> Add to Cart
@@ -93,7 +93,7 @@
                                          class="card-img-top" alt="@topping.ToppingName">
                                     <div class="card-body">
                                         <h5 class="card-title">@topping.ToppingName</h5>
-                                        <p class="card-text">@topping.Price.ToString("C")</p>
+                                        <p class="card-text">@string.Format("{0:N0} đ", topping.Price)</p>
                                         <div class="d-grid gap-2">
                                             <button class="btn btn-primary" @onclick="() => SelectTopping(topping)">
                                                 <i class="bi bi-plus-circle"></i> Add Topping
@@ -118,7 +118,7 @@
                                          class="card-img-top" alt="@combo.ComboName">
                                     <div class="card-body">
                                         <h5 class="card-title">@combo.ComboName</h5>
-                                        <p class="card-text">@combo.TotalPrice.ToString("C")</p>
+                                        <p class="card-text">@string.Format("{0:N0} đ", combo.TotalPrice)</p>
                                         <div class="d-grid gap-2">
                                             <button class="btn btn-primary" @onclick="() => SelectCombo(combo)">
                                                 <i class="bi bi-plus-circle"></i> Add Combo
@@ -185,15 +185,11 @@
 
                     <div class="d-flex justify-content-between mb-2">
                         <span>Subtotal:</span>
-                        <span>@currentOrder.Subtotal.ToString("C")</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tax (10%):</span>
-                        <span>@currentOrder.Tax.ToString("C")</span>
+                        <span>@string.Format("{0:N0} đ",currentOrder.Subtotal)</span>
                     </div>
                     <div class="d-flex justify-content-between fw-bold">
                         <span>Total:</span>
-                        <span>@currentOrder.TotalAmount.ToString("C")</span>
+                        <span>@string.Format("{0:N0} đ",currentOrder.TotalAmount)</span>
                     </div>
 
                     <div class="d-grid gap-2 mt-3">
@@ -252,7 +248,7 @@
                                                checked="@IsToppingSelected(topping.ToppingId)"
                                                @onchange="e => ToggleTopping(topping.ToppingId, e.Value)" />
                                         <label class="form-check-label" for="topping-@topping.ToppingId">
-                                            @topping.ToppingName (@topping.Price.ToString("C"))
+                                            @topping.ToppingName (@string.Format("{0:N0} đ", topping.Price))
                                         </label>
                                     </div>
                                 </div>
@@ -314,45 +310,20 @@
                                        @onclick='() => currentOrder.PaymentMethod = "Cash"' />
                                 <label class="form-check-label" for="cash">Cash</label>
                             </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="credit"
-                                       checked="@(currentOrder.PaymentMethod == "Credit Card")"
-                                       @onclick='() => currentOrder.PaymentMethod = "Credit Card"' />
-                                <label class="form-check-label" for="credit">Credit Card</label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="debit"
-                                       checked="@(currentOrder.PaymentMethod == "Debit Card")"
-                                       @onclick='() => currentOrder.PaymentMethod = "Debit Card"' />
-                                <label class="form-check-label" for="debit">Debit Card</label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="mobile"
-                                       checked="@(currentOrder.PaymentMethod == "Mobile Payment")"
-                                       @onclick='() => currentOrder.PaymentMethod = "Mobile Payment"' />
-                                <label class="form-check-label" for="mobile">Mobile Payment</label>
-                            </div>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
                         <span>Subtotal:</span>
-                        <span>@currentOrder.Subtotal.ToString("C")</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tax (10%):</span>
-                        <span>@currentOrder.Tax.ToString("C")</span>
+                        <span>@string.Format("{0:N0} đ",currentOrder.Subtotal)</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Delivery Fee:</span>
-                        <span>@currentOrder.DeliveryFee.ToString("C")</span>
+                        <span>@string.Format("{0:N0} đ",currentOrder.DeliveryFee)</span>
                     </div>
                     <div class="d-flex justify-content-between fw-bold">
                         <span>Total:</span>
-                        <span>@currentOrder.TotalAmount.ToString("C")</span>
+                        <span>@string.Format("{0:N0} đ",currentOrder.TotalAmount)</span>
                     </div>
                 </div>
                 <div class="modal-footer">
