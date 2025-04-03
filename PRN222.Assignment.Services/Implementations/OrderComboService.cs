@@ -17,10 +17,18 @@ namespace PRN222.Assignment.Services.Implementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<OrderCombo>> GetAllOrderCombos()
+        public async Task<List<OrderCombo>> GetAllOrderCombosAsync()
         {
-            var orderCombos = await _unitOfWork.OrderCombos.GetAllAsync();
-            return orderCombos.ToList(); // Convert IEnumerable<OrderCombo> to List<OrderCombo>
+            var orderCombos = await _unitOfWork.OrderCombos.GetAllAsync(
+                null, // no filter
+                null, // no orderby
+                null, // no pagination
+                null, // no includes
+                oc => oc.Combo,  // Include Combo
+                oc => oc.Order   // Include Order
+            );
+
+            return orderCombos.ToList();
         }
 
         public async Task<OrderCombo> CreateOrderComboAsync(OrderCombo orderCombo)

@@ -9,7 +9,7 @@ namespace PRN222.Assignment.Services.Interfaces
 {
     public interface IOrderComboService
     {
-        Task<List<OrderCombo>> GetAllOrderCombos();
+        Task<List<OrderCombo>> GetAllOrderCombosAsync();
 
         Task<OrderCombo> CreateOrderComboAsync(OrderCombo orderCombo);
 

@@ -19,11 +19,14 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
             _comboOrderService = comboOrderService;
         }
 
-        public IList<OrderCombo> OrderCombo { get; set; } = default!;
+        // Change the type of OrderCombo to List<OrderCombo> instead of IList<OrderCombo>
+        public List<OrderCombo> OrderCombo { get; set; } = default!;
 
+        // OnGetAsync is the method that will run when the page is accessed
         public async Task OnGetAsync()
         {
-            OrderCombo = await _comboOrderService.GetAllOrderCombos(); 
+            // Fetch all OrderCombos asynchronously and assign them to the OrderCombo property
+            OrderCombo = await _comboOrderService.GetAllOrderCombosAsync();
         }
     }
 }
