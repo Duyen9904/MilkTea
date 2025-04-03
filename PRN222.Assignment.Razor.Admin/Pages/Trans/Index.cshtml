@@ -1,0 +1,67 @@
+﻿@page
+@model PRN222.Assignment.Razor.Admin.Pages.Trans.IndexModel
+
+@{
+    ViewData["Title"] = "Transaction List";
+}
+
+<h1>Transaction List</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].TransactionType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].TransactionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].Order)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].ProcessedByNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Transaction)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransactionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order.DeliveryAddress) 
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProcessedByNavigation.Address)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.TransactionId" class="btn btn-primary">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.TransactionId" class="btn btn-info">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.TransactionId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

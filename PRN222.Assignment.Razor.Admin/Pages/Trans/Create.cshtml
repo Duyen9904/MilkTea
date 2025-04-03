@@ -1,0 +1,72 @@
+﻿@page
+@model PRN222.Assignment.Razor.Admin.Pages.Trans.CreateModel
+@{
+    ViewData["Title"] = "Create Transaction";
+}
+<h1>Create</h1>
+<h4>Transaction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Transaction.ProcessedBy" class="control-label">Processed By</label>
+                <select asp-for="Transaction.ProcessedBy" class="form-control" asp-items="ViewBag.ProcessedBy"></select>
+                <span asp-validation-for="Transaction.ProcessedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.Amount" class="control-label">Amount</label>
+                <input asp-for="Transaction.Amount" class="form-control" />
+                <span asp-validation-for="Transaction.Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.TransactionType" class="control-label">Transaction Type</label>
+                <select asp-for="Transaction.TransactionType" class="form-control">
+                    <option value="Payment">Payment</option>
+                    <option value="Deposit">Deposit</option>
+                    <option value="Refund">Refund</option>
+                    <option value="Adjustment">Adjustment</option>
+                </select>
+                <span asp-validation-for="Transaction.TransactionType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.Description" class="control-label">Description</label>
+                <textarea asp-for="Transaction.Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Transaction.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.OrderId" class="control-label">Order</label>
+                <select asp-for="Transaction.OrderId" class="form-control" asp-items="ViewBag.OrderId">
+                    <option value="">-- Select Order --</option>
+                </select>
+                <span asp-validation-for="Transaction.OrderId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.TransactionDate" class="control-label">Transaction Date</label>
+                <input asp-for="Transaction.TransactionDate" type="datetime-local" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="Transaction.TransactionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Optional JavaScript for additional validation or dynamic form behavior
+        $(document).ready(function() {
+            // When transaction type changes
+            $("#Transaction_TransactionType").change(function() {
+                var transactionType = $(this).val();
+                // You could add logic here to show/hide fields based on transaction type
+            });
+        });
+    </script>
+}
