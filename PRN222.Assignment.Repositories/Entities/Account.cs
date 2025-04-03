@@ -25,6 +25,9 @@ public partial class Account
 
     public DateTime CreatedAt { get; set; }
 
+    public string FullName => $"{FirstName} {LastName}";
+
+
     public virtual ICollection<Order> OrderAccounts { get; set; } = new List<Order>();
 
     public virtual ICollection<Order> OrderProcessedByNavigations { get; set; } = new List<Order>();

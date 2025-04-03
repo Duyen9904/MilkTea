@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore; // Important: Add this!
 
 namespace PRN222.Assignment.Services.Implementations
 {
@@ -26,12 +27,6 @@ namespace PRN222.Assignment.Services.Implementations
             int? pageSize = null,
             params Expression<Func<Transaction, object>>[] includes)
         {
-            //var allIncludes = new List<Expression<Func<Transaction, object>>>();
-            //allIncludes.Add(ps => ps.MilkTeaProduct);
-            //if (includes != null && includes.Length > 0)
-            //{
-            //    allIncludes.AddRange(includes);
-            //}
             return _unitOfWork.Transactions.GetAll(filter, orderBy, pageIndex, pageSize, includes);
         }
 
@@ -42,7 +37,18 @@ namespace PRN222.Assignment.Services.Implementations
             int? pageSize = null,
             params Expression<Func<Transaction, object>>[] includes)
         {
-            return await _unitOfWork.Transactions.GetAllAsync(filter, orderBy, pageIndex, pageSize, includes);
+            // Adapt the 'includes' pattern from GetMilkTeaProductByIdAsync
+            return await _unitOfWork.Transactions.GetAllAsync(
+                filter: filter,
+                orderBy: orderBy,
+                pageIndex: pageIndex,
+                pageSize: pageSize,
+                includes: new Expression<Func<Transaction, object>>[]
+                {
+                    t => t.Order,
+                    t => t.ProcessedByNavigation
+                }
+            );
         }
 
         public Transaction GetById(int id)

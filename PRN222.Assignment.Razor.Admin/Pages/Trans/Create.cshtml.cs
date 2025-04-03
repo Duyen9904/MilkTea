@@ -24,7 +24,7 @@ namespace PRN222.Assignment.Razor.Admin.Pages.Trans
         public IActionResult OnGet()
         {
             ViewData["OrderId"] = new SelectList(_context.Orders, "OrderId", "DeliveryAddress");
-            ViewData["ProcessedBy"] = new SelectList(_context.Accounts, "AccountId", "Address");
+            ViewData["ProcessedBy"] = new SelectList(_context.Accounts, "AccountId", "FullName");
             return Page();
         }
 

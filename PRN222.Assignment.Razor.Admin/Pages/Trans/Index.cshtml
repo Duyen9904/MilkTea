@@ -54,7 +54,7 @@
                     @Html.DisplayFor(modelItem => item.Order.DeliveryAddress) 
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProcessedByNavigation.Address)
+                    @Html.DisplayFor(modelItem => item.ProcessedByNavigation.FullName)
                 </td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.TransactionId" class="btn btn-primary">Edit</a> |
