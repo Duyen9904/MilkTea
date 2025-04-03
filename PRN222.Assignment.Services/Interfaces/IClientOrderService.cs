@@ -60,5 +60,7 @@ namespace PRN222.Assignment.Services.Interfaces
         Task<IEnumerable<ComboItem>> GetComboItemsByComboIdAsync(int comboId);
 
         Task<ProductSize> GetProductSizeByIdAsync(int productSizeId);
+
+        Task<Transaction> CreateTransaction(Transaction transaction);
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using PRN222.Assignment.Blazor.Client.Components.Services;
 using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PRN222.Assignment.Blazor.Client.Components.Pages
@@ -21,6 +23,9 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
         [Inject]
         protected OrderStateService OrderStateService { get; set; }
+
+        [Inject]
+        protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
         protected List<Category> categories = new List<Category>();
         protected List<MilkTeaProduct> products = new List<MilkTeaProduct>();
@@ -43,25 +48,16 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         protected int confirmedOrderId = 0;
         protected string searchText = string.Empty;
 
-        // Order data
-        protected Order currentOrder = new Order
-        {
-            AccountId = 2, // Default user ID for the POS
-            OrderDate = DateTime.Now,
-            Status = "Pending",
-            PaymentStatus = "Pending",
-            PaymentMethod = "Cash",
-            DeliveryAddress = "",
-            Subtotal = 0,
-            Tax = 0,
-            DeliveryFee = 15000, // Default delivery fee
-            TotalAmount = 0
-        };
+        protected Order currentOrder;
 
         protected List<OrderItem> orderItems = new List<OrderItem>();
 
         protected override async Task OnInitializedAsync()
         {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            currentOrder = await InitializeOrder(user);
             // Load categories
             var allCategories = await ClientOrderService.GetAllCategoriesAsync();
             categories = allCategories.ToList();
@@ -94,8 +90,48 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             {
                 orderItems = orderData.OrderItems;
                 currentOrder = orderData.Order;
+
+                // Make sure the account ID is still set to the current user
+                var accountId = GetAccountIdFromUser(user);
+                if (accountId > 0)
+                {
+                    currentOrder.AccountId = accountId;
+                }
+
                 await CalculateOrderTotals();
             }
+        }
+
+        private async Task<Order> InitializeOrder(ClaimsPrincipal user)
+        {
+            var accountId = GetAccountIdFromUser(user);
+
+            return new Order
+            {
+                AccountId = accountId > 0 ? accountId : 1, // Fallback if user not found
+                OrderDate = DateTime.Now,
+                Status = "Pending",
+                PaymentStatus = "Pending",
+                PaymentMethod = "Cash",
+                DeliveryAddress = "",
+                Subtotal = 0,
+                Tax = 0,
+                DeliveryFee = 15000, // Default delivery fee
+                TotalAmount = 0
+            };
+        }
+
+        private int GetAccountIdFromUser(ClaimsPrincipal user)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                var accountIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+                if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId))
+                {
+                    return accountId;
+                }
+            }
+            return 0;
         }
         protected override void OnAfterRender(bool firstRender)
         {
@@ -297,7 +333,6 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 }
             }
         }
-
         protected bool IsToppingSelected(int toppingId)
         {
             return selectedToppingIds.Contains(toppingId);
@@ -478,6 +513,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 OrderItemToppings = new List<OrderItemTopping>()
             };
 
+
             // Make sure product is loaded for display
             if (productSize.Product == null)
             {
@@ -597,50 +633,78 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             {
                 return;
             }
-
             try
             {
                 // Set order date to current time
                 currentOrder.OrderDate = DateTime.Now;
+
+                // Ensure we have the current user's account ID
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+                var accountId = GetAccountIdFromUser(user);
+                if (accountId > 0)
+                {
+                    currentOrder.AccountId = accountId;
+                }
 
                 // Create order in database
                 var createdOrder = await ClientOrderService.CreateOrderAsync(currentOrder);
 
                 if (createdOrder != null && createdOrder.OrderId > 0)
                 {
-                    // Update order items with the new order ID
-                    foreach (var item in orderItems)
+                    // Create new order items with the order ID from createdOrder
+                    var newOrderItems = orderItems.Select(item => new OrderItem
                     {
-                        item.OrderId = createdOrder.OrderId;
-                    }
+                        OrderId = createdOrder.OrderId,
+                        ProductSizeId = item.ProductSizeId,
+                        Quantity = item.Quantity,
+                        SpecialInstructions = item.SpecialInstructions,
+                        UnitPrice = item.UnitPrice
+                    }).ToList();
 
                     // Create order items in database
-                    var createdOrderItems = await ClientOrderService.CreateOrderItemsAsync(orderItems);
+                    var createdOrderItems = await ClientOrderService.CreateOrderItemsAsync(newOrderItems);
 
                     if (createdOrderItems != null && createdOrderItems.Any())
                     {
                         // Create toppings for each order item
                         var allOrderItemToppings = new List<OrderItemTopping>();
 
-                        foreach (var orderItem in orderItems)
+                        for (int i = 0; i < orderItems.Count; i++)
                         {
-                            var createdItem = createdOrderItems.FirstOrDefault(i =>
-                                i.ProductSizeId == orderItem.ProductSizeId &&
-                                i.OrderId == createdOrder.OrderId);
+                            var originalItem = orderItems[i];
+                            // Find corresponding created item
+                            var createdItem = createdOrderItems.ElementAt(i);
 
-                            if (createdItem != null && orderItem.OrderItemToppings.Any())
+                            if (createdItem != null && originalItem.OrderItemToppings.Any())
                             {
-                                foreach (var topping in orderItem.OrderItemToppings)
+                                // Use a HashSet to track toppings and avoid duplicates
+                                var addedToppingIds = new HashSet<int>();
+
+                                foreach (var originalTopping in originalItem.OrderItemToppings)
                                 {
-                                    topping.OrderItemId = createdItem.OrderItemId;
-                                    allOrderItemToppings.Add(topping);
+                                    // Skip if we've already added this topping to this order item
+                                    if (!addedToppingIds.Add(originalTopping.ToppingId))
+                                    {
+                                        continue; // Skip duplicate toppings
+                                    }
+
+                                    // Create new topping
+                                    var newTopping = new OrderItemTopping
+                                    {
+                                        OrderItemId = createdItem.OrderItemId,
+                                        ToppingId = originalTopping.ToppingId,
+                                        Price = originalTopping.Price
+                                    };
+
+                                    allOrderItemToppings.Add(newTopping);
                                 }
                             }
                         }
 
                         if (allOrderItemToppings.Any())
                         {
-                            await ClientOrderService.CreateOrderItemToppingsAsync(allOrderItemToppings);
+                            var result = await ClientOrderService.CreateOrderItemToppingsAsync(allOrderItemToppings);
                         }
 
                         // Order created successfully
@@ -650,6 +714,12 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
                         // Clear order state
                         OrderStateService.ClearOrderData();
+
+                        // Reset the orderItems and prepare for a new order
+                        orderItems = new List<OrderItem>();
+
+                        // Initialize a new order with the current user
+                        currentOrder = await InitializeOrder(user);
                     }
                 }
             }
@@ -659,7 +729,6 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 // Could show error message here
             }
         }
-
         protected void CloseSuccessModal()
         {
             showSuccessModal = false;
