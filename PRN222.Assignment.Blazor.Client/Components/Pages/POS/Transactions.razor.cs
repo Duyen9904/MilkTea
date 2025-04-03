@@ -23,8 +23,10 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         protected DateTime startDate = DateTime.Now.AddDays(-7);
         protected DateTime endDate = DateTime.Now;
 
+        private string currentUserId;
         protected override async Task OnInitializedAsync()
         {
+
             await LoadTransactions();
         }
 

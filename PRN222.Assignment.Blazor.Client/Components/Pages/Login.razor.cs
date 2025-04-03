@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PRN222.Assignment.Blazor.Client.Components.Pages
@@ -22,6 +24,8 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
         [Inject]
         protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        [Inject]
+        protected IJSRuntime JSRuntime { get; set; }
 
         protected Account Account { get; set; } = new Account();
         protected bool RememberMe { get; set; } = false;
@@ -60,6 +64,19 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
                         // This is optional, but helpful to ensure the auth state is properly updated
                         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+                        if (RememberMe)
+                        {
+                            // Store the user's info (this could be a token or just the user info, depending on your auth mechanism)
+                            var authData = new { user.AccountId, user.Email, user.Role };
+                            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authData", JsonSerializer.Serialize(authData));
+                        }
+                        else
+                        {
+                            // Store session-based authentication data (token, user info, etc.)
+                            await JSRuntime.InvokeVoidAsync("sessionStorage.setItem", "authData", JsonSerializer.Serialize(new { user.AccountId, user.Email, user.Role }));
+                        }
+
 
                         // Navigate to index page
                         NavigationManager.NavigateTo("/index");
