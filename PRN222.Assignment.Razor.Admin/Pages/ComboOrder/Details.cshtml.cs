@@ -28,7 +28,7 @@ namespace PRN222.Assignment.Razor.Admin.Pages.ComboOrder
                 return NotFound();
             }
 
-            OrderCombo = await _comboOrderService.GetOrderComboByIdAsync(id);  // Use service to get OrderCombo by ID
+            OrderCombo = await _comboOrderService.GetOrderComboByIdAsync(id);  
 
             if (OrderCombo == null)
             {

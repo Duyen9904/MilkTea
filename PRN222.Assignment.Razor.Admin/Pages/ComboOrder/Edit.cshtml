@@ -13,78 +13,193 @@
     }
 
     .page-container {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
         padding: 2rem;
         margin-top: 2rem;
         margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .page-container:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        border-color: #ffc107;
+    }
+
+    .card-header {
+        border-bottom: 3px solid #e9a800;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        transition: all 0.2s ease;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+    .btn-outline-secondary:hover, .btn-info:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-floating label {
+        opacity: 0.8;
+    }
+
+    .summary-card {
+        background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+        border-left: 4px solid #ffc107;
+    }
+
+    .price-badge {
+        background-color: #ffc107;
+        color: #212529;
+        font-weight: bold;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .price-badge:hover {
+            transform: scale(1.05);
+        }
+
+    .input-animated {
+        transition: all 0.2s;
+    }
+
+        .input-animated:focus {
+            transform: scale(1.02);
+        }
+
+    /* Save button animation */
+    @@keyframes pulse {
+        0%
+
+    {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+
+    }
+
+    .btn-pulse {
+        animation: pulse 2s infinite;
     }
 </style>
 
 <div class="container page-container py-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-            <h2 class="mb-0 fs-4"><i class="bi bi-pencil-square me-2"></i>Edit Combo Order</h2>
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark py-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-basket2-fill me-3 fs-3"></i>
+                <h2 class="mb-0 fs-4">Edit Combo Order</h2>
+            </div>
         </div>
         <div class="card-body p-4">
-            <form method="post">
+            <form method="post" id="editComboForm">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                 <input type="hidden" asp-for="OrderCombo.OrderComboId" />
 
-                <div class="row g-3">
+                <div class="row g-4">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <select asp-for="OrderCombo.OrderId" class="form-select" asp-items="ViewBag.OrderId"></select>
-                            <label asp-for="OrderCombo.OrderId"></label>
+                            <select asp-for="OrderCombo.OrderId" class="form-select input-animated" asp-items="ViewBag.OrderId"></select>
+                            <label asp-for="OrderCombo.OrderId">Order</label>
                             <span asp-validation-for="OrderCombo.OrderId" class="text-danger"></span>
+                            <small class="text-muted mt-1 d-block">Select the associated order</small>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <select asp-for="OrderCombo.ComboId" class="form-select" asp-items="ViewBag.ComboId"></select>
-                            <label asp-for="OrderCombo.ComboId"></label>
+                            <select asp-for="OrderCombo.ComboId" class="form-select input-animated" asp-items="ViewBag.ComboId"></select>
+                            <label asp-for="OrderCombo.ComboId">Combo Package</label>
                             <span asp-validation-for="OrderCombo.ComboId" class="text-danger"></span>
+                            <small class="text-muted mt-1 d-block">Select the combo package</small>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input asp-for="OrderCombo.Quantity" class="form-control" min="1" placeholder="1" />
-                            <label asp-for="OrderCombo.Quantity"></label>
+                            <input asp-for="OrderCombo.Quantity" class="form-control input-animated" min="1" placeholder="1" id="quantityInput" />
+                            <label asp-for="OrderCombo.Quantity">Quantity</label>
                             <span asp-validation-for="OrderCombo.Quantity" class="text-danger"></span>
+                            <div class="d-flex align-items-center justify-content-end mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="decreaseBtn">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="increaseBtn">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
-                            <input asp-for="OrderCombo.UnitPrice" class="form-control" min="0.01" step="0.01" placeholder="0.00" />
-                            <label asp-for="OrderCombo.UnitPrice"></label>
+                            <input asp-for="OrderCombo.UnitPrice" class="form-control input-animated" min="0.01" step="0.01" placeholder="0.00" id="priceInput" />
+                            <label asp-for="OrderCombo.UnitPrice">Unit Price ($)</label>
                             <span asp-validation-for="OrderCombo.UnitPrice" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="card mt-3 mb-4 bg-light">
+                <div class="card mt-4 mb-4 summary-card">
                     <div class="card-body">
-                        <h5>Order Summary</h5>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span>Total Amount:</span>
-                            <span class="h4">$<span id="totalPrice">0.00</span></span>
+                        <h5 class="card-title mb-3">
+                            <i class="bi bi-receipt me-2"></i>Order Summary
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Quantity:</span>
+                                    <span class="fw-bold" id="summaryQuantity">1</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Unit Price:</span>
+                                    <span class="fw-bold">$<span id="summaryPrice">0.00</span></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">Total:</span>
+                                    <span class="price-badge">$<span id="totalPrice">0.00</span></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <a asp-page="./Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i>Cancel
+                    <a asp-page="./Index" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
                     </a>
                     <div>
                         <a asp-page="./Details" asp-route-id="@Model.OrderCombo.OrderComboId" class="btn btn-info me-2">
                             <i class="bi bi-eye me-1"></i>View Details
                         </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle me-1"></i>Save Changes
+                        <button type="submit" class="btn btn-success px-4" id="saveButton">
+                            <i class="bi bi-check-circle me-2"></i>Save Changes
                         </button>
                     </div>
                 </div>
@@ -98,21 +213,101 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        // Calculate total price when the page loads and when inputs change
         $(document).ready(function() {
-            function updateTotal() {
-                const quantity = $('input[name="OrderCombo.Quantity"]').val() || 0;
-                const price = $('input[name="OrderCombo.UnitPrice"]').val() || 0;
-                const total = (quantity * price).toFixed(2);
-                $('#totalPrice').text(total);
+            // Function to format currency
+            function formatCurrency(amount) {
+                return parseFloat(amount).toFixed(2);
             }
 
-            // Initial calculation
-            updateTotal();
+            // Function to update the summary and total
+            function updateSummary() {
+                const quantity = parseInt($('#quantityInput').val()) || 0;
+                const price = parseFloat($('#priceInput').val()) || 0;
+                const total = quantity * price;
 
-            // Update on change
-            $('input[name="OrderCombo.Quantity"], input[name="OrderCombo.UnitPrice"]').on('change keyup', function() {
-                updateTotal();
+                $('#summaryQuantity').text(quantity);
+                $('#summaryPrice').text(formatCurrency(price));
+                $('#totalPrice').text(formatCurrency(total));
+
+                // Add animation to price when it changes
+                $('.price-badge').addClass('animate__animated animate__pulse');
+                setTimeout(function() {
+                    $('.price-badge').removeClass('animate__animated animate__pulse');
+                }, 500);
+            }
+
+            // Initial update
+            updateSummary();
+
+            // Update on input change
+            $('#quantityInput, #priceInput').on('input change', function() {
+                updateSummary();
+            });
+
+            // Quantity increment/decrement buttons
+            $('#increaseBtn').click(function() {
+                const currentVal = parseInt($('#quantityInput').val()) || 0;
+                $('#quantityInput').val(currentVal + 1).trigger('change');
+            });
+
+            $('#decreaseBtn').click(function() {
+                const currentVal = parseInt($('#quantityInput').val()) || 0;
+                if (currentVal > 1) {
+                    $('#quantityInput').val(currentVal - 1).trigger('change');
+                }
+            });
+
+            // Add pulse animation to save button on hover
+            $('#saveButton').hover(
+                function() { $(this).addClass('btn-pulse'); },
+                function() { $(this).removeClass('btn-pulse'); }
+            );
+
+            // Form validation feedback enhancement
+            $('#editComboForm').on('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Shake invalid fields
+                    $('.is-invalid').closest('.form-floating').addClass('animate__animated animate__shakeX');
+                    setTimeout(function() {
+                        $('.form-floating').removeClass('animate__animated animate__shakeX');
+                    }, 1000);
+                } else {
+                    // Show loading state on button when form is valid
+                    $('#saveButton').html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...');
+                }
+
+                $(this).addClass('was-validated');
+            });
+
+            // Add tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Combo selection enhancement - fetch price when combo changes
+            $('#OrderCombo_ComboId').change(function() {
+                // In a real implementation, you would fetch the price from the server
+                // This is just a simulation
+                const comboId = $(this).val();
+                if (comboId) {
+                    // Simulate loading
+                    $('#priceInput').attr('disabled', true);
+                    setTimeout(function() {
+                        // Sample prices based on combo ID - would come from server in real implementation
+                        const samplePrices = {
+                            '1': 12.99,
+                            '2': 24.99,
+                            '3': 19.99,
+                            '4': 34.99
+                        };
+
+                        const defaultPrice = 9.99;
+                        const newPrice = samplePrices[comboId] || defaultPrice;
+
+                        $('#priceInput').val(newPrice).attr('disabled', false).trigger('change');
+                    }, 500);
+                }
             });
         });
     </script>
