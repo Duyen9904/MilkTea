@@ -172,8 +172,8 @@
 
     /* Table action buttons */
     .table-action-btn {
-        width: 36px;
-        height: 36px;
+        width: 40px; /* Slightly larger */
+        height: 40px; /* Slightly larger */
         padding: 0;
         display: flex;
         align-items: center;
@@ -192,11 +192,20 @@
             transform: translateY(-2px) scale(1.05);
         }
 
+        .table-action-btn i {
+            font-size: 1.2rem; /* Larger icons */
+            transition: all 0.3s ease;
+        }
+
     .btn-edit:hover {
         background: #6a11cb;
         color: white;
         border-color: #6a11cb;
     }
+
+        .btn-edit:hover i {
+            transform: rotate(15deg);
+        }
 
     .btn-view:hover {
         background: #2575fc;
@@ -204,11 +213,19 @@
         border-color: #2575fc;
     }
 
+        .btn-view:hover i {
+            transform: scale(1.2);
+        }
+
     .btn-delete:hover {
         background: #ff416c;
         color: white;
         border-color: #ff416c;
     }
+
+        .btn-delete:hover i {
+            transform: rotate(-15deg);
+        }
 
     /* Empty state styling */
     .empty-state {
@@ -362,6 +379,32 @@
         color: #6a11cb;
     }
 
+    /* Pulse animation for action icons */
+    @@keyframes pulse {
+        0%
+
+    {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+    }
+
+    /* Tooltip enhanced styling */
+    .tooltip-inner {
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
 </style>
 
 <div class="container-fluid page-container">
@@ -374,10 +417,10 @@
             </div>
             <div>
                 <a class="btn btn-primary me-3 action-btn" asp-page="/ComboOrder/Index">
-                    <i class="bi bi-bag"></i> View Combo Orders
+                    <i class="bi bi-bag-fill"></i> View Combo Orders
                 </a>
                 <a class="btn btn-success action-btn" asp-page="Create">
-                    <i class="bi bi-plus-circle"></i> Create New Product
+                    <i class="bi bi-plus-circle-fill"></i> Create New Product
                 </a>
             </div>
         </div>
@@ -386,20 +429,20 @@
     <!-- Stats overview cards -->
     <div class="stats-container">
         <div class="stat-card">
-            <i class="bi bi-cup-hot stat-icon"></i>
+            <i class="bi bi-cup-hot-fill stat-icon"></i>
             <div class="stat-value">@Model.MilkTeaProduct.Count</div>
             <div class="stat-label">Total Products</div>
         </div>
 
         <div class="stat-card">
-            <i class="bi bi-check-circle stat-icon"></i>
+            <i class="bi bi-check-circle-fill stat-icon"></i>
             <div class="stat-value">@Model.MilkTeaProduct.Count(p => p.IsAvailable)</div>
             <div class="stat-label">Available Products</div>
         </div>
 
         <div class="stat-card">
-            <i class="bi bi-tags stat-icon"></i>
-            <div class="stat-value">@Model.MilkTeaProduct.Where(p => p.Category != null).Select(p => p.Category.CategoryName).Distinct().Count()</div>            
+            <i class="bi bi-tags-fill stat-icon"></i>
+            <div class="stat-value">@Model.MilkTeaProduct.Where(p => p.Category != null).Select(p => p.Category.CategoryName).Distinct().Count()</div>
             <div class="stat-label">Categories</div>
         </div>
 
@@ -471,20 +514,20 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <i class="bi bi-calendar-check me-2" style="color: #777;"></i>
+                                        <i class="bi bi-calendar-check-fill me-2" style="color: #777;"></i>
                                         @item.LastModified.ToString("MMM dd, yyyy")
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
                                         <a class="btn table-action-btn btn-edit" asp-page="./Edit" asp-route-id="@item.ProductId" title="Edit">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <a class="btn table-action-btn btn-view" asp-page="./Details" asp-route-id="@item.ProductId" title="View Details">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="bi bi-info-circle"></i>
                                         </a>
                                         <a class="btn table-action-btn btn-delete" asp-page="./Delete" asp-route-id="@item.ProductId" title="Delete">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -500,7 +543,7 @@
                         <h5 class="empty-state-message">No products found</h5>
                         <p class="empty-state-submessage">Start by adding your first milk tea product</p>
                         <a class="btn btn-primary action-btn" asp-page="Create">
-                            <i class="bi bi-plus-circle"></i> Add Product
+                            <i class="bi bi-plus-circle-fill"></i> Add Product
                         </a>
                     </div>
                 }
@@ -568,8 +611,23 @@
                 });
             });
 
-            // Tooltip initialization
-            $('[title]').tooltip();
+            // Enhanced tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    animation: true,
+                    delay: { show: 100, hide: 100 }
+                })
+            });
+
+            // Subtle animation effect for action buttons on page load
+            setTimeout(function() {
+                $(".table-action-btn").each(function(index) {
+                    setTimeout(() => {
+                        $(this).css("animation", "pulse 0.6s ease");
+                    }, index * 100);
+                });
+            }, 1000);
         });
     </script>
 }
