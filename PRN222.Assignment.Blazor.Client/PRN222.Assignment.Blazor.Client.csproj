@@ -15,6 +15,7 @@
      <PackageReference Include="bootstrap" Version="5.2.3" ExcludeAssets="ContentFiles" />
      <PackageReference Include="bootstrap.sass" Version="5.2.3" />
      <PackageReference Include="Supabase" Version="1.1.1" />
+     <PackageReference Include="supabase-csharp" Version="0.16.2" />
   </ItemGroup>
 
 </Project>
