@@ -7,10 +7,22 @@ using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.CustomerService;
 using PRN222.Assignment.Services.Interfaces;
 using PRN222.Assignment.Services.Implementations;
+using RazorPage;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+        .WithOrigins("https://localhost:7130")  // Client app's URL
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
+
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<MilkTeaShopContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -57,11 +69,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAntiforgery();
-
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGet("/", () => Results.Redirect("/Login"));
 app.MapRazorPages();
-
-
+app.MapHub<OrderHub>("/orderHub");
 app.Run();

@@ -178,7 +178,43 @@
 }
 
 @section Scripts {
-    @{
+    @{  
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <!-- Test script to verify script loading -->
+    <script>
+        console.log("SCRIPT TEST: Page is loading scripts");
+    </script>
+    
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Test if SignalR loaded -->
+    <script>
+        console.log("SCRIPT TEST: SignalR loaded?", typeof signalR !== 'undefined');
+    </script>
+    
+    <script src="~/js/site.js"></script>
+    
+    <!-- Final test script -->
+    <script>
+        console.log("SCRIPT TEST: All scripts loaded");
+        
+        // Direct SignalR test - bypassing site.js
+        if (typeof signalR !== 'undefined') {
+            console.log("DIRECT TEST: Creating SignalR connection");
+            const testConnection = new signalR.HubConnectionBuilder()
+                .withUrl("/orderHub")
+                .build();
+                
+            testConnection.on("ReceiveOrderNotification", function(message) {
+                console.log("DIRECT TEST: Notification received:", message);
+                alert("New order received: " + message);
+            });
+            
+            testConnection.start()
+                .then(() => console.log("DIRECT TEST: SignalR connected"))
+                .catch(err => console.error("DIRECT TEST: SignalR connection error:", err));
+        }
+    </script>
 }

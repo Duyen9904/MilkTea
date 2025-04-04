@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using PRN222.Assignment.Blazor.Client.Components.Services;
 using PRN222.Assignment.Repositories.Entities;
@@ -52,12 +53,23 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
         protected List<OrderItem> orderItems = new List<OrderItem>();
 
+        private HubConnection hubConnection;
+
         protected override async Task OnInitializedAsync()
         {
+            
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
             currentOrder = await InitializeOrder(user);
+
+            hubConnection = new HubConnectionBuilder()
+    .WithUrl("https://localhost:7068/orderHub") 
+    .WithAutomaticReconnect()
+    .Build();
+
+            await hubConnection.StartAsync();
+
             // Load categories
             var allCategories = await ClientOrderService.GetAllCategoriesAsync();
             categories = allCategories.ToList();
@@ -706,6 +718,8 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                             var result = await ClientOrderService.CreateOrderItemToppingsAsync(allOrderItemToppings);
                         }
 
+                        //signalR send msg order created successfully
+                        await hubConnection.SendAsync("SendOrderNotification", $"New order #{createdOrder.OrderId} created with total {createdOrder.TotalAmount:C}");
                         // Order created successfully
                         confirmedOrderId = createdOrder.OrderId;
                         showPaymentModal = false;

@@ -114,6 +114,7 @@ namespace PRN222.Assignment.Services.Implementations
             foreach (var item in orderItems)
             {
                 await _unitOfWork.OrderItems.AddAsync(item);
+
                 result.Add(item);
             }
             await _unitOfWork.SaveAsync();
