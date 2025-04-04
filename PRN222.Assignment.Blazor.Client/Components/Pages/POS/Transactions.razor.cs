@@ -5,6 +5,7 @@ using PRN222.Assignment.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PRN222.Assignment.Blazor.Client.Components.Pages
@@ -180,5 +181,19 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         {
             await UpdateOrderStatus(orderId, "Cancelled");
         }
+
+        private int GetAccountIdFromUser(ClaimsPrincipal user)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                var accountIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+                if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId))
+                {
+                    return accountId;
+                }
+            }
+            return 0;
+        }
+
     }
 }

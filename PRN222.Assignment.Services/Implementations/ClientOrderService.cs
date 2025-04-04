@@ -77,10 +77,36 @@ namespace PRN222.Assignment.Services.Implementations
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
+            order.ProcessedBy = (int)order.AccountId;
+            order.PaymentStatus ??= "Completed";
+
             await _unitOfWork.Orders.AddAsync(order);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(); // OrderId is auto-generated here
+
+            var transaction = new Transaction
+            {
+                OrderId = order.OrderId,
+                ProcessedBy = order.ProcessedBy,
+                Amount = order.TotalAmount,
+                TransactionType = "Payment",
+                Description = $"Order #{order.OrderId} payment via {order.PaymentMethod}",
+                TransactionDate = DateTime.Now,
+            };
+
+            try
+            {
+                await _unitOfWork.Transactions.AddAsync(transaction);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to create transaction for order {order.OrderId}: {ex.Message}");
+            }
+
             return order;
         }
+
+
 
         public async Task<IEnumerable<OrderItem>> CreateOrderItemsAsync(IEnumerable<OrderItem> orderItems)
         {
