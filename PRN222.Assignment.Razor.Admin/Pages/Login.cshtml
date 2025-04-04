@@ -2,38 +2,373 @@
 @model ProductStore.Pages.LoginModel
 @{
     ViewData["Title"] = "Login";
+    Layout = null; // This removes the default layout completely
 }
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <h2 class="text-center">Login</h2>
-            <form method="post">
-                <div class="form-group">
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" class="form-control" placeholder="Enter your email" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Password"></label>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block mt-3">Login</button>
-            </form>
-            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-            {
-                <div class="alert alert-danger mt-3">
-                    @Model.ErrorMessage
-                </div>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - ProductStore</title>
+    <!-- Include FontAwesome from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --text-color: #374151;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-image: url('/images/login.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .login-card {
+            background-color: rgba(105, 105, 105, 0.7); /* dimgray with 70% opacity */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px); /* For Safari support */
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+            .login-card:hover {
+                transform: translateY(-5px);
             }
+
+        .login-header {
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+            .logo-circle i {
+                font-size: 28px;
+                color: white;
+            }
+
+        .login-header h2 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #111827;
+        }
+
+        .login-body {
+            padding: 0 2rem 1.5rem;
+        }
+
+        .custom-input {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            height: 56px;
+            transition: all 0.3s ease;
+        }
+
+            .custom-input:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            }
+
+        .form-floating > label {
+            padding: 0.75rem 1rem;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .validation-message {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            border: none;
+            height: 48px;
+            font-weight: 600;
+            width: 100%;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+            .login-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: all 0.6s ease;
+            }
+
+            .login-btn:hover {
+                background: linear-gradient(135deg, var(--primary-hover), #4f46e5);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            }
+
+                .login-btn:hover::before {
+                    left: 100%;
+                }
+
+        .forgot-password {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .forgot-password:hover {
+                color: var(--primary-hover);
+                text-decoration: underline;
+            }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border-width: 1px;
+        }
+
+            .social-btn:hover {
+                background-color: #f3f4f6;
+                transform: translateY(-2px);
+            }
+
+        .login-footer {
+            padding: 1.5rem 2rem;
+            background-color: #f9fafb;
+            border-top: 1px solid #f3f4f6;
+        }
+
+            .login-footer a {
+                color: var(--primary-color);
+                font-weight: 600;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .login-footer a:hover {
+                    color: var(--primary-hover);
+                    text-decoration: underline;
+                }
+
+        .custom-alert {
+            border-radius: var(--border-radius);
+            border-left: 4px solid #ef4444;
+            animation: shakeAlert 0.5s linear;
+        }
+
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        @@keyframes shakeAlert {
+            0%, 100%
+
+        {
+            transform: translateX(0);
+        }
+
+        10%, 30%, 50%, 70%, 90% {
+            transform: translateX(-5px);
+        }
+
+        20%, 40%, 60%, 80% {
+            transform: translateX(5px);
+        }
+
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 576px) {
+            .login-card
+
+        {
+            border-radius: var(--border-radius);
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-container">
+                    <div class="logo-circle">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                <h2>Welcome Back</h2>
+                <p class="text-white">Please sign in to continue</p>
+            </div>
+
+            <div class="login-body">
+                <form method="post" id="loginForm">
+                    <div class="form-floating mb-4">
+                        <input asp-for="Email" class="form-control custom-input" id="emailInput" placeholder="name@example.com" />
+                        <label asp-for="Email">Email address</label>
+                        <span asp-validation-for="Email" class="text-danger validation-message"></span>
+                    </div>
+
+                    <div class="form-floating mb-4 password-container">
+                        <input asp-for="Password" type="password" class="form-control custom-input" id="passwordInput" placeholder="Password" />
+                        <label asp-for="Password">Password</label>
+                        <span class="password-toggle" onclick="togglePassword()">
+                            <i class="far fa-eye" id="toggleIcon"></i>
+                        </span>
+                        <span asp-validation-for="Password" class="text-danger validation-message"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary login-btn" id="loginButton">
+                        <span class="btn-text">Sign In</span>
+                        <div class="spinner-border spinner-border-sm d-none" role="status" id="loginSpinner">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+                </form>
+            
+            </div>
         </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger custom-alert mt-3" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                @Model.ErrorMessage
+            </div>
+        }
     </div>
-</div>
 
+    <!-- Include necessary scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    <script>
+        // Password toggle functionality
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleIcon = document.getElementById('toggleIcon');
 
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Add loading state to button on submit
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const button = document.getElementById('loginButton');
+            const spinner = document.getElementById('loginSpinner');
+            const buttonText = document.querySelector('.btn-text');
+
+            buttonText.style.opacity = '0';
+            spinner.classList.remove('d-none');
+
+            // This timeout is just for demo purposes to show the spinner
+            setTimeout(() => {
+                buttonText.style.opacity = '1';
+                spinner.classList.add('d-none');
+            }, 2000);
+        });
+
+        // Input animation effects
+        const inputs = document.querySelectorAll('.custom-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('input-focused');
+            });
+
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.parentElement.classList.remove('input-focused');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
