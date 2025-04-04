@@ -23,6 +23,7 @@ namespace PRN222.Assignment.Services.Implementations
         public async Task<List<Order>> GetAllOrders()
         {
             var orders = await _unitOfWork.Orders.GetAllAsync(
+<<<<<<< HEAD
         filter: null, // remove filtering here
         orderBy: null,
         pageIndex: null, // remove pagination
@@ -37,9 +38,17 @@ namespace PRN222.Assignment.Services.Implementations
             {
                 order.OrderItems = order.OrderItems.Where(oi => oi.Quantity > 0).ToList(); // Example filter on OrderItems
             }
+=======
+        filter: o => o.OrderDate >= DateTime.UtcNow.AddDays(-7),
+        orderBy: null,
+        pageIndex: 1,
+        pageSize: 10
+    );
+>>>>>>> e597979a6b16bcbf9c0775b0587f982c0f258df6
 
             return orders.ToList();
         }
+
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
