@@ -77,10 +77,36 @@ namespace PRN222.Assignment.Services.Implementations
 
         public async Task<Order> CreateOrderAsync(Order order)
         {
+            order.ProcessedBy = (int)order.AccountId;
+            order.PaymentStatus ??= "Completed";
+
             await _unitOfWork.Orders.AddAsync(order);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(); // OrderId is auto-generated here
+
+            var transaction = new Transaction
+            {
+                OrderId = order.OrderId,
+                ProcessedBy = order.ProcessedBy,
+                Amount = order.TotalAmount,
+                TransactionType = "Payment",
+                Description = $"Order #{order.OrderId} payment via {order.PaymentMethod}",
+                TransactionDate = DateTime.Now,
+            };
+
+            try
+            {
+                await _unitOfWork.Transactions.AddAsync(transaction);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to create transaction for order {order.OrderId}: {ex.Message}");
+            }
+
             return order;
         }
+
+
 
         public async Task<IEnumerable<OrderItem>> CreateOrderItemsAsync(IEnumerable<OrderItem> orderItems)
         {
@@ -174,30 +200,25 @@ namespace PRN222.Assignment.Services.Implementations
 
             var order = orders.FirstOrDefault();
 
-            if (order != null)
+            // In ClientOrderService.cs, modify the GetOrderWithDetailsAsync method:
+            if (order != null && order.OrderItems != null)
             {
-                // Load order items with product size details
                 foreach (var item in order.OrderItems)
                 {
-                    // Load product size with product and size details
+                    // Properly load the complete ProductSize with its associations
                     var productSizes = await _unitOfWork.ProductSizes.GetAllAsync(
                         filter: ps => ps.ProductSizeId == item.ProductSizeId,
                         includes: [ps => ps.Product, ps => ps.Size]);
 
                     item.ProductSize = productSizes.FirstOrDefault();
 
-                    // Load toppings for each order item
-                    var toppings = await _unitOfWork.OrderItemsToppings.GetAllAsync(
+                    // IMPORTANT: Create a new collection instead of adding to existing
+                    // Load toppings and assign directly as a new collection
+                    item.OrderItemToppings = (await _unitOfWork.OrderItemsToppings.GetAllAsync(
                         filter: t => t.OrderItemId == item.OrderItemId,
-                        includes: t => t.Topping);
-
-                    foreach (var topping in toppings)
-                    {
-                        item.OrderItemToppings.Add(topping);
-                    }
+                        includes: t => t.Topping)).ToList();
                 }
             }
-
             return order;
         }
 

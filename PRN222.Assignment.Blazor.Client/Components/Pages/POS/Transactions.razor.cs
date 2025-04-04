@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using PRN222.Assignment.Repositories.Entities;
 using PRN222.Assignment.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PRN222.Assignment.Blazor.Client.Components.Pages
@@ -11,12 +13,15 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
     public class TransactionsBase : ComponentBase
     {
         [Inject]
+        protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+        [Inject]
         protected IOrderService OrderService { get; set; }
 
         [Inject]
         protected IClientOrderService ClientOrderService { get; set; }
 
-        protected List<Order> transactions = new List<Order>();
+        protected List<Order> orders = new List<Order>();
         protected Order selectedOrder = null;
         protected bool isLoading = true;
         protected bool showCompleted = false;
@@ -26,11 +31,10 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         private string currentUserId;
         protected override async Task OnInitializedAsync()
         {
-
-            await LoadTransactions();
+            await LoadOrders();
         }
 
-        protected async Task LoadTransactions()
+        protected async Task LoadOrders()
         {
             isLoading = true;
             try
@@ -39,7 +43,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 var allOrders = await OrderService.GetAllOrders();
 
                 // Filter orders based on criteria
-                transactions = allOrders.Where(o =>
+                orders = allOrders.Where(o =>
                     o.OrderDate >= startDate &&
                     o.OrderDate <= endDate.AddDays(1) &&
                     (!showCompleted || o.Status == "Completed"))
@@ -47,7 +51,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                     .ToList();
 
                 // Ensure account data is loaded
-                foreach (var order in transactions)
+                foreach (var order in orders)
                 {
                     if (order.Account == null)
                     {
@@ -66,7 +70,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading transactions: {ex.Message}");
+                Console.WriteLine($"Error loading orders: {ex.Message}");
                 // Could show error message here
             }
             finally
@@ -76,14 +80,14 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
             }
         }
 
-        protected async Task FilterTransactions()
+        protected async Task FilterOrders()
         {
-            await LoadTransactions();
+            await LoadOrders();
         }
 
         protected async Task RefreshData()
         {
-            await LoadTransactions();
+            await LoadOrders();
         }
 
         protected string GetOrderItemSummary(Order order)
@@ -126,13 +130,13 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
 
         protected async Task ViewOrderDetails(Order order)
         {
-            // Load full order details if needed
-            if (order.OrderItems == null || !order.OrderItems.Any())
-            {
-                order = await ClientOrderService.GetOrderWithDetailsAsync(order.OrderId);
-            }
+            // Always reload the full order with all details to ensure we have all related entities
+            var fullOrder = await ClientOrderService.GetOrderWithDetailsAsync(order.OrderId);
 
-            selectedOrder = order;
+            if (fullOrder != null)
+            {
+                selectedOrder = fullOrder;
+            }
         }
 
         protected void CloseOrderDetails()
@@ -156,7 +160,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                     }
 
                     // Find and update the order in the list
-                    var order = transactions.FirstOrDefault(o => o.OrderId == orderId);
+                    var order = orders.FirstOrDefault(o => o.OrderId == orderId);
                     if (order != null)
                     {
                         order.Status = newStatus;
@@ -177,5 +181,19 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
         {
             await UpdateOrderStatus(orderId, "Cancelled");
         }
+
+        private int GetAccountIdFromUser(ClaimsPrincipal user)
+        {
+            if (user.Identity.IsAuthenticated)
+            {
+                var accountIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+                if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId))
+                {
+                    return accountId;
+                }
+            }
+            return 0;
+        }
+
     }
 }

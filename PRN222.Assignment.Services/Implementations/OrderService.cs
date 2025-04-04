@@ -23,14 +23,14 @@ namespace PRN222.Assignment.Services.Implementations
         public async Task<List<Order>> GetAllOrders()
         {
             var orders = await _unitOfWork.Orders.GetAllAsync(
-                filter: o => o.OrderDate >= DateTime.UtcNow.AddDays(-7), // Filter orders within last 7 days
-                orderBy: null,
-                pageIndex: 1,
-                pageSize: 10,
-                o => o.Account,
-                o => o.OrderItems,
-                o => o.OrderCombos
-            );
+        filter: null, // remove filtering here
+        orderBy: null,
+        pageIndex: null, // remove pagination
+        pageSize: null,
+        o => o.Account,
+        o => o.OrderItems,
+        o => o.OrderCombos
+    );
 
             // Apply further in-memory filtering on related entities
             foreach (var order in orders)
