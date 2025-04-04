@@ -62,7 +62,7 @@ builder.Services.AddScoped<IProductSizeService, ProductSizeService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IToppingService, ToppingService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddSingleton<SupabaseService>();
+builder.Services.AddSingleton<SupabaseStorageService>();
 
 
 builder.Services.AddScoped<IClientOrderService, ClientOrderService>();
