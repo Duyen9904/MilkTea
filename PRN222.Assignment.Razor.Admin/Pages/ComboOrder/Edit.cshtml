@@ -1,50 +1,119 @@
 ﻿@page
 @model PRN222.Assignment.Razor.Admin.Pages.ComboOrder.EditModel
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Combo Order";
 }
 
-<h1>Edit</h1>
+<style>
+    body {
+        background-image: url('/images/background.jpg');
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+    }
 
-<h4>OrderCombo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="OrderCombo.OrderComboId" />
-            <div class="form-group">
-                <label asp-for="OrderCombo.OrderId" class="control-label"></label>
-                <select asp-for="OrderCombo.OrderId" class="form-control" asp-items="ViewBag.OrderId"></select>
-                <span asp-validation-for="OrderCombo.OrderId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderCombo.ComboId" class="control-label"></label>
-                <select asp-for="OrderCombo.ComboId" class="form-control" asp-items="ViewBag.ComboId"></select>
-                <span asp-validation-for="OrderCombo.ComboId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderCombo.Quantity" class="control-label"></label>
-                <input asp-for="OrderCombo.Quantity" class="form-control" />
-                <span asp-validation-for="OrderCombo.Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderCombo.UnitPrice" class="control-label"></label>
-                <input asp-for="OrderCombo.UnitPrice" class="form-control" />
-                <span asp-validation-for="OrderCombo.UnitPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    .page-container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+</style>
+
+<div class="container page-container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h2 class="mb-0 fs-4"><i class="bi bi-pencil-square me-2"></i>Edit Combo Order</h2>
+        </div>
+        <div class="card-body p-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="OrderCombo.OrderComboId" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <select asp-for="OrderCombo.OrderId" class="form-select" asp-items="ViewBag.OrderId"></select>
+                            <label asp-for="OrderCombo.OrderId"></label>
+                            <span asp-validation-for="OrderCombo.OrderId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <select asp-for="OrderCombo.ComboId" class="form-select" asp-items="ViewBag.ComboId"></select>
+                            <label asp-for="OrderCombo.ComboId"></label>
+                            <span asp-validation-for="OrderCombo.ComboId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="OrderCombo.Quantity" class="form-control" min="1" placeholder="1" />
+                            <label asp-for="OrderCombo.Quantity"></label>
+                            <span asp-validation-for="OrderCombo.Quantity" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="OrderCombo.UnitPrice" class="form-control" min="0.01" step="0.01" placeholder="0.00" />
+                            <label asp-for="OrderCombo.UnitPrice"></label>
+                            <span asp-validation-for="OrderCombo.UnitPrice" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3 mb-4 bg-light">
+                    <div class="card-body">
+                        <h5>Order Summary</h5>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span>Total Amount:</span>
+                            <span class="h4">$<span id="totalPrice">0.00</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-page="./Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Cancel
+                    </a>
+                    <div>
+                        <a asp-page="./Details" asp-route-id="@Model.OrderCombo.OrderComboId" class="btn btn-info me-2">
+                            <i class="bi bi-eye me-1"></i>View Details
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Calculate total price when the page loads and when inputs change
+        $(document).ready(function() {
+            function updateTotal() {
+                const quantity = $('input[name="OrderCombo.Quantity"]').val() || 0;
+                const price = $('input[name="OrderCombo.UnitPrice"]').val() || 0;
+                const total = (quantity * price).toFixed(2);
+                $('#totalPrice').text(total);
+            }
+
+            // Initial calculation
+            updateTotal();
+
+            // Update on change
+            $('input[name="OrderCombo.Quantity"], input[name="OrderCombo.UnitPrice"]').on('change keyup', function() {
+                updateTotal();
+            });
+        });
+    </script>
 }

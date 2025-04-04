@@ -4,38 +4,425 @@
     ViewData["Title"] = "Milk Tea Products";
 }
 
-<div class="container-fluid">
-    <!-- Header with search and action buttons -->
-    <div class="d-flex justify-content-between align-items-center my-4">
-        <div>
-            <h1 class="h3 mb-0 text-gray-800">@ViewData["Title"]</h1>
-            <p class="text-muted">Manage your milk tea product inventory</p>
+<style>
+    body {
+        background-image: url('/images/background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        min-height: 100vh;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .glass-card {
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+        .glass-card:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+    .glass-table {
+        background-color: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .glass-header {
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 1.2rem 1.5rem;
+    }
+
+    .page-container {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+    }
+
+    /* Enhanced title styling */
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #8a2387, #e94057, #f27121);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    /* Larger action buttons */
+    .action-btn {
+        padding: 0.7rem 1.4rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .action-btn i {
+            margin-right: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+    /* Primary button styling */
+    .btn-primary {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border: none;
+    }
+
+    /* Success button styling */
+    .btn-success {
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+        border: none;
+    }
+
+    /* Table styles */
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead th {
+            font-weight: 600;
+            color: #444;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+    /* Enhanced search input */
+    .search-group {
+        position: relative;
+        width: 320px;
+    }
+
+    .search-input {
+        padding: 0.7rem 1rem 0.7rem 3rem;
+        border-radius: 25px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+        .search-input:focus {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #6a11cb;
+        }
+
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777;
+    }
+
+    /* Badge styling */
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .badge-available {
+        background: linear-gradient(135deg, #00b09b, #96c93d);
+        color: white;
+    }
+
+    .badge-unavailable {
+        background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        color: white;
+    }
+
+    /* Table action buttons */
+    .table-action-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        margin: 0 3px;
+        color: #555;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+        .table-action-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+        }
+
+    .btn-edit:hover {
+        background: #6a11cb;
+        color: white;
+        border-color: #6a11cb;
+    }
+
+    .btn-view:hover {
+        background: #2575fc;
+        color: white;
+        border-color: #2575fc;
+    }
+
+    .btn-delete:hover {
+        background: #ff416c;
+        color: white;
+        border-color: #ff416c;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        padding: 3rem 0;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-message {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-submessage {
+        color: #777;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Product image styling */
+    .product-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+        .product-image:hover {
+            transform: scale(1.5);
+        }
+
+    /* Pagination styling */
+    .pagination {
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-link {
+        border: none;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+
+    .page-item.active .page-link {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        border-color: transparent;
+    }
+
+    /* Animation for table rows */
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    #productsTable tbody tr {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+        #productsTable tbody tr:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        #productsTable tbody tr:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        #productsTable tbody tr:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        #productsTable tbody tr:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        #productsTable tbody tr:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+    /* Fancy hover effect on rows */
+    #productsTable tbody tr {
+        transition: all 0.3s ease;
+    }
+
+        #productsTable tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: scale(1.01);
+        }
+
+    /* Additional info display */
+    .stats-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        flex: 1;
+        padding: 20px;
+        text-align: center;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 5px 0;
+        background: linear-gradient(90deg, #8a2387, #e94057, #f27121);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #6a11cb;
+    }
+
+</style>
+
+<div class="container-fluid page-container">
+    <!-- Header with title and action buttons -->
+    <div class="glass-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title">@ViewData["Title"]</h1>
+                <p class="subtitle">Manage your premium milk tea inventory</p>
+            </div>
+            <div>
+                <a class="btn btn-primary me-3 action-btn" asp-page="/ComboOrder/Index">
+                    <i class="bi bi-bag"></i> View Combo Orders
+                </a>
+                <a class="btn btn-success action-btn" asp-page="Create">
+                    <i class="bi bi-plus-circle"></i> Create New Product
+                </a>
+            </div>
         </div>
-        <div>
-            <a class="btn btn-primary me-2" asp-page="/ComboOrder/Index">
-                <i class="bi bi-bag"></i> View Combo Orders
-            </a>
-            <a class="btn btn-success" asp-page="Create">
-                <i class="bi bi-plus-circle"></i> Create New Product
-            </a>
+    </div>
+
+    <!-- Stats overview cards -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <i class="bi bi-cup-hot stat-icon"></i>
+            <div class="stat-value">@Model.MilkTeaProduct.Count</div>
+            <div class="stat-label">Total Products</div>
+        </div>
+
+        <div class="stat-card">
+            <i class="bi bi-check-circle stat-icon"></i>
+            <div class="stat-value">@Model.MilkTeaProduct.Count(p => p.IsAvailable)</div>
+            <div class="stat-label">Available Products</div>
+        </div>
+
+        <div class="stat-card">
+            <i class="bi bi-tags stat-icon"></i>
+            <div class="stat-value">@Model.MilkTeaProduct.Where(p => p.Category != null).Select(p => p.Category.CategoryName).Distinct().Count()</div>            
+            <div class="stat-label">Categories</div>
+        </div>
+
+        <div class="stat-card">
+            <i class="bi bi-currency-dollar stat-icon"></i>
+            <div class="stat-value">$@Model.MilkTeaProduct.Average(p => p.BasePrice).ToString("F2")</div>
+            <div class="stat-label">Avg. Price</div>
         </div>
     </div>
 
     <!-- Search and filter section -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Product List</h6>
-            <div class="input-group" style="width: 300px;">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search products...">
-                <button class="btn btn-outline-secondary" type="button" id="searchButton">
-                    <i class="bi bi-search"></i>
-                </button>
+    <div class="glass-card mb-4">
+        <div class="glass-header d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold fs-5" style="color: #6a11cb;">Product Inventory</h6>
+            <div class="search-group">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" id="searchInput" class="form-control search-input" placeholder="Search products...">
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <div class="table-responsive">
-                <table class="table table-hover" id="productsTable">
-                    <thead class="table-light">
+                <table class="table table-hover glass-table" id="productsTable">
+                    <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].ProductName)</th>
                             <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].Category)</th>
@@ -54,38 +441,49 @@
                                     <strong>@Html.DisplayFor(modelItem => item.ProductName)</strong>
                                     <div class="small text-muted text-truncate" style="max-width: 200px;">@Html.DisplayFor(modelItem => item.Description)</div>
                                 </td>
-                                <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
-                                <td>$@Html.DisplayFor(modelItem => item.BasePrice)</td>
+                                <td>
+                                    <span class="badge rounded-pill bg-info text-dark">
+                                        @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">$@Html.DisplayFor(modelItem => item.BasePrice)</span>
+                                </td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(item.ImagePath))
                                     {
-                                        <img src="@item.ImagePath" alt="@item.ProductName" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                                        <img src="@item.ImagePath" alt="@item.ProductName" class="product-image" />
                                     }
                                     else
                                     {
-                                        <span class="text-muted">No image</span>
+                                        <span class="badge bg-secondary">No image</span>
                                     }
                                 </td>
                                 <td>
                                     @if (item.IsAvailable)
                                     {
-                                        <span class="badge bg-success">Available</span>
+                                        <span class="status-badge badge-available">Available</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">Unavailable</span>
+                                        <span class="status-badge badge-unavailable">Unavailable</span>
                                     }
                                 </td>
-                                <td>@item.LastModified.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-calendar-check me-2" style="color: #777;"></i>
+                                        @item.LastModified.ToString("MMM dd, yyyy")
+                                    </div>
+                                </td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a class="btn btn-outline-primary btn-sm" asp-page="./Edit" asp-route-id="@item.ProductId" title="Edit">
+                                        <a class="btn table-action-btn btn-edit" asp-page="./Edit" asp-route-id="@item.ProductId" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <a class="btn btn-outline-info btn-sm" asp-page="./Details" asp-route-id="@item.ProductId" title="View Details">
+                                        <a class="btn table-action-btn btn-view" asp-page="./Details" asp-route-id="@item.ProductId" title="View Details">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a class="btn btn-outline-danger btn-sm" asp-page="./Delete" asp-route-id="@item.ProductId" title="Delete">
+                                        <a class="btn table-action-btn btn-delete" asp-page="./Delete" asp-route-id="@item.ProductId" title="Delete">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </div>
@@ -97,13 +495,13 @@
 
                 @if (!Model.MilkTeaProduct.Any())
                 {
-                    <div class="text-center py-5">
-                        <div class="mb-3">
-                            <i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i>
-                        </div>
-                        <h5>No products found</h5>
-                        <p class="text-muted">Try adding a new milk tea product</p>
-                        <a class="btn btn-primary mt-2" asp-page="Create">Add Product</a>
+                    <div class="empty-state">
+                        <i class="bi bi-cup-straw empty-state-icon"></i>
+                        <h5 class="empty-state-message">No products found</h5>
+                        <p class="empty-state-submessage">Start by adding your first milk tea product</p>
+                        <a class="btn btn-primary action-btn" asp-page="Create">
+                            <i class="bi bi-plus-circle"></i> Add Product
+                        </a>
                     </div>
                 }
             </div>
@@ -111,20 +509,24 @@
             <!-- Pagination controls -->
             @if (Model.MilkTeaProduct.Any())
             {
-                <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="d-flex justify-content-between align-items-center mt-4">
                     <div class="text-muted">
                         Showing <span id="startRecord">1</span> to <span id="endRecord">@Model.MilkTeaProduct.Count</span> of @Model.MilkTeaProduct.Count entries
                     </div>
                     <nav>
-                        <ul class="pagination pagination-sm">
+                        <ul class="pagination">
                             <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                <a class="page-link" href="#" tabindex="-1">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
                             </li>
                             <li class="page-item active">
                                 <a class="page-link" href="#">1</a>
                             </li>
                             <li class="page-item disabled">
-                                <a class="page-link" href="#">Next</a>
+                                <a class="page-link" href="#">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
                             </li>
                         </ul>
                     </nav>
@@ -156,6 +558,18 @@
                 $("#startRecord").text(visibleRows > 0 ? 1 : 0);
                 $("#endRecord").text(visibleRows);
             }
+
+            // Animation for stat cards
+            $(".stat-card").each(function(index) {
+                $(this).css({
+                    "animation": "fadeIn 0.5s ease forwards",
+                    "animation-delay": (index * 0.1) + "s",
+                    "opacity": "0"
+                });
+            });
+
+            // Tooltip initialization
+            $('[title]').tooltip();
         });
     </script>
 }
