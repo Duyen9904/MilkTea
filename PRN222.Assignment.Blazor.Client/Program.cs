@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Components.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddDbContext<MilkTeaShopContext>(options =>
@@ -40,7 +39,6 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 
-// Add IHostEnvironmentAuthenticationStateProvider to avoid "Headers are read-only" error
 builder.Services.AddScoped<IHostEnvironmentAuthenticationStateProvider>(sp =>
     (ServerAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>()
 );
@@ -64,6 +62,8 @@ builder.Services.AddScoped<IProductSizeService, ProductSizeService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IToppingService, ToppingService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<SupabaseService>();
+
 
 builder.Services.AddScoped<IClientOrderService, ClientOrderService>();
 
@@ -72,11 +72,10 @@ builder.Services.AddScoped<OrderStateService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
