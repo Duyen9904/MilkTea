@@ -1,17 +1,14 @@
 ﻿@page
 @model PRN222.Assignment.Razor.Admin.Components.Milktea.CreateModel
-
 @{
     ViewData["Title"] = "Create";
 }
-
 <h1>Create</h1>
-
 <h4>MilkTeaProduct</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="MilkTeaProduct.ProductName" class="control-label"></label>
@@ -20,7 +17,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="MilkTeaProduct.CategoryId" class="control-label"></label>
-                <select asp-for="MilkTeaProduct.CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
+                <select asp-for="MilkTeaProduct.CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="MilkTeaProduct.Description" class="control-label"></label>
@@ -34,20 +31,47 @@
             </div>
             <div class="form-group">
                 <label asp-for="MilkTeaProduct.ImagePath" class="control-label"></label>
-                <input asp-for="MilkTeaProduct.ImagePath" class="form-control" />
+                <div class="custom-file">
+                    <input type="file" id="imageUpload" name="ImageFile" class="custom-file-input" accept="image/*" />
+                    <label class="custom-file-label" for="imageUpload">Chọn hình ảnh...</label>
+                </div>
+                <input type="hidden" asp-for="MilkTeaProduct.ImagePath" />
                 <span asp-validation-for="MilkTeaProduct.ImagePath" class="text-danger"></span>
+                <div id="imagePreview" class="mt-2" style="display: none;">
+                    <img id="preview" src="#" alt="Preview" style="max-width: 100%; height: auto;" />
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
 <div>
     <a asp-page="Index">Back to List</a>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on('change', function () {
+                var fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').html(fileName);
+                
+                // Image preview
+                var fileInput = document.getElementById('imageUpload');
+                var preview = document.getElementById('preview');
+                var imagePreview = document.getElementById('imagePreview');
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+            });
+        });
+    </script>
 }

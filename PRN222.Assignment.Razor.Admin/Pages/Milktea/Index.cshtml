@@ -1,55 +1,161 @@
 ﻿@page
 @model PRN222.Assignment.Razor.Admin.Components.Milktea.IndexModel
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Milk Tea Products";
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<div class="row mb-3">
-    <!-- Navigation Link to ComboOrder -->
-    <div class="col-md-4">
-        <a class="btn btn-primary" asp-page="/ComboOrder/Index">View Combo Orders</a>
+<div class="container-fluid">
+    <!-- Header with search and action buttons -->
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">@ViewData["Title"]</h1>
+            <p class="text-muted">Manage your milk tea product inventory</p>
+        </div>
+        <div>
+            <a class="btn btn-primary me-2" asp-page="/ComboOrder/Index">
+                <i class="bi bi-bag"></i> View Combo Orders
+            </a>
+            <a class="btn btn-success" asp-page="Create">
+                <i class="bi bi-plus-circle"></i> Create New Product
+            </a>
+        </div>
     </div>
-    <!-- Link to create a new item -->
-    <div class="col-md-4">
-        <a class="btn btn-success" asp-page="Create">Create New Product</a>
+
+    <!-- Search and filter section -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Product List</h6>
+            <div class="input-group" style="width: 300px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search products...">
+                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="productsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].ProductName)</th>
+                            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].Category)</th>
+                            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].BasePrice)</th>
+                            <th>Image</th>
+                            <th>Status</th>
+                            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].LastModified)</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.MilkTeaProduct)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@Html.DisplayFor(modelItem => item.ProductName)</strong>
+                                    <div class="small text-muted text-truncate" style="max-width: 200px;">@Html.DisplayFor(modelItem => item.Description)</div>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
+                                <td>$@Html.DisplayFor(modelItem => item.BasePrice)</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                                    {
+                                        <img src="@item.ImagePath" alt="@item.ProductName" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No image</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">Available</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Unavailable</span>
+                                    }
+                                </td>
+                                <td>@item.LastModified.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a class="btn btn-outline-primary btn-sm" asp-page="./Edit" asp-route-id="@item.ProductId" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a class="btn btn-outline-info btn-sm" asp-page="./Details" asp-route-id="@item.ProductId" title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a class="btn btn-outline-danger btn-sm" asp-page="./Delete" asp-route-id="@item.ProductId" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @if (!Model.MilkTeaProduct.Any())
+                {
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <i class="bi bi-exclamation-circle" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5>No products found</h5>
+                        <p class="text-muted">Try adding a new milk tea product</p>
+                        <a class="btn btn-primary mt-2" asp-page="Create">Add Product</a>
+                    </div>
+                }
+            </div>
+
+            <!-- Pagination controls -->
+            @if (Model.MilkTeaProduct.Any())
+            {
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        Showing <span id="startRecord">1</span> to <span id="endRecord">@Model.MilkTeaProduct.Count</span> of @Model.MilkTeaProduct.Count entries
+                    </div>
+                    <nav>
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].ProductName)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].Description)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].BasePrice)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].ImagePath)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].IsAvailable)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].CreatedDate)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].LastModified)</th>
-            <th>@Html.DisplayNameFor(model => model.MilkTeaProduct[0].Category)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.MilkTeaProduct)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@Html.DisplayFor(modelItem => item.BasePrice)</td>
-                <td>@Html.DisplayFor(modelItem => item.ImagePath)</td>
-                <td>@Html.DisplayFor(modelItem => item.IsAvailable)</td>
-                <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
-                <td>@Html.DisplayFor(modelItem => item.LastModified)</td>
-                <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
-                <td>
-                    <a class="btn btn-warning btn-sm" asp-page="./Edit" asp-route-id="@item.ProductId">Edit</a> |
-                    <a class="btn btn-info btn-sm" asp-page="./Details" asp-route-id="@item.ProductId">Details</a> |
-                    <a class="btn btn-danger btn-sm" asp-page="./Delete" asp-route-id="@item.ProductId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Search functionality
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#productsTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+
+                // Update showing entries text
+                updateShowingEntries();
+            });
+
+            // Function to update the showing entries text
+            function updateShowingEntries() {
+                var visibleRows = $("#productsTable tbody tr:visible").length;
+                var totalRows = $("#productsTable tbody tr").length;
+
+                $("#startRecord").text(visibleRows > 0 ? 1 : 0);
+                $("#endRecord").text(visibleRows);
+            }
+        });
+    </script>
+}
