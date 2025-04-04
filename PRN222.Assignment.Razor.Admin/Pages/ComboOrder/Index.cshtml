@@ -4,30 +4,98 @@
     ViewData["Title"] = "Combo Orders";
 }
 
+<!-- External Libraries -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
 <style>
     body {
         background-image: url('/images/background.jpg');
         background-size: cover;
         background-attachment: fixed;
         background-position: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .content-wrapper {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-        margin-bottom: 20px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.6s ease-in-out;
     }
 
     .card {
-        background-color: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .card-header {
+        border-radius: 12px 12px 0 0;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover, .btn-outline-success:hover {
+        box-shadow: 0 0 12px rgba(40, 167, 69, 0.6);
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f9f9f9;
+        cursor: pointer;
+    }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
+        border-color: #80bdff;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+        border-radius: 50px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+        box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     }
 </style>
 
 <div class="container-fluid mt-4">
     <div class="content-wrapper">
-        <div class="card shadow">
+        <div class="card shadow-sm animate__animated animate__fadeIn">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h3 class="m-0">Combo Orders Management</h3>
                 <a asp-page="Create" class="btn btn-success">
@@ -35,6 +103,7 @@
                 </a>
             </div>
             <div class="card-body">
+
                 <!-- Search and Filter -->
                 <div class="row mb-4">
                     <div class="col-md-6">
@@ -65,28 +134,28 @@
                 <!-- Orders Table -->
                 <div class="table-responsive">
                     <table class="table table-hover table-striped" id="comboOrdersTable">
-                        <thead class="table-light">
+                        <thead class="table-dark">
                             <tr>
                                 <th>
-                                    <a href="#" class="text-decoration-none text-dark d-flex align-items-center" data-sort="quantity">
+                                    <a href="#" class="text-decoration-none text-white d-flex align-items-center" data-sort="quantity">
                                         @Html.DisplayNameFor(model => model.OrderCombo[0].Quantity)
                                         <i class="fas fa-sort ms-1"></i>
                                     </a>
                                 </th>
                                 <th>
-                                    <a href="#" class="text-decoration-none text-dark d-flex align-items-center" data-sort="price">
+                                    <a href="#" class="text-decoration-none text-white d-flex align-items-center" data-sort="price">
                                         @Html.DisplayNameFor(model => model.OrderCombo[0].UnitPrice)
                                         <i class="fas fa-sort ms-1"></i>
                                     </a>
                                 </th>
                                 <th>
-                                    <a href="#" class="text-decoration-none text-dark d-flex align-items-center" data-sort="combo">
+                                    <a href="#" class="text-decoration-none text-white d-flex align-items-center" data-sort="combo">
                                         @Html.DisplayNameFor(model => model.OrderCombo[0].Combo)
                                         <i class="fas fa-sort ms-1"></i>
                                     </a>
                                 </th>
                                 <th>
-                                    <a href="#" class="text-decoration-none text-dark d-flex align-items-center" data-sort="address">
+                                    <a href="#" class="text-decoration-none text-white d-flex align-items-center" data-sort="address">
                                         @Html.DisplayNameFor(model => model.OrderCombo[0].Order)
                                         <i class="fas fa-sort ms-1"></i>
                                     </a>
@@ -100,27 +169,16 @@
                             @foreach (var item in Model.OrderCombo)
                             {
                                 <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Quantity)
-                                    </td>
-                                    <td>
-                                        $@Html.DisplayFor(modelItem => item.UnitPrice)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Combo.ComboName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Order.DeliveryAddress)
-                                    </td>
-                                    <td>
-                                        $@(item.Quantity * item.UnitPrice)
-                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
+                                    <td>$@Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Combo.ComboName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Order.DeliveryAddress)</td>
+                                    <td>$@(item.Quantity * item.UnitPrice)</td>
                                     <td>
                                         @{
                                             string badgeClass = "badge bg-info";
                                             string status = "Processing";
 
-                                            // This is a placeholder. Use actual status logic based on your data model
                                             if (item.OrderComboId % 3 == 0)
                                             {
                                                 badgeClass = "badge bg-success";
@@ -156,15 +214,11 @@
                 <!-- Pagination -->
                 <nav aria-label="Page navigation" class="mt-4">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Previous</a>
-                        </li>
+                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
                         <li class="page-item"><a class="page-link" href="#">2</a></li>
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
                     </ul>
                 </nav>
 
@@ -173,7 +227,9 @@
                     <div class="col-md-4">
                         <div class="card bg-light">
                             <div class="card-body">
-                                <h5 class="card-title">Order Summary</h5>
+                                <h5 class="card-title">
+                                    <i class="fas fa-chart-pie text-primary me-2"></i> Order Summary
+                                </h5>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         Total Orders
@@ -196,6 +252,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Toast -->
+                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    <div id="exportToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                Export started successfully!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -203,74 +272,40 @@
 
 @section Scripts {
     <script>
-        // Initialize tooltips
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
             });
 
-            // Search functionality
-            document.getElementById('searchButton').addEventListener('click', function() {
+            document.getElementById('searchButton').addEventListener('click', function () {
                 const searchValue = document.getElementById('searchInput').value.toLowerCase();
-                const table = document.getElementById('comboOrdersTable');
-                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-                for (let i = 0; i < rows.length; i++) {
-                    const rowText = rows[i].textContent.toLowerCase();
-                    if (rowText.includes(searchValue)) {
-                        rows[i].style.display = '';
-                    } else {
-                        rows[i].style.display = 'none';
-                    }
-                }
-            });
-
-            // Filter functionality
-            document.getElementById('filterStatus').addEventListener('change', function() {
-                const filterValue = this.value.toLowerCase();
-                const table = document.getElementById('comboOrdersTable');
-                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-                if (filterValue === '') {
-                    for (let i = 0; i < rows.length; i++) {
-                        rows[i].style.display = '';
-                    }
-                    return;
-                }
-
-                for (let i = 0; i < rows.length; i++) {
-                    const statusCell = rows[i].getElementsByTagName('td')[5];
-                    const statusText = statusCell.textContent.toLowerCase();
-
-                    if (statusText.includes(filterValue)) {
-                        rows[i].style.display = '';
-                    } else {
-                        rows[i].style.display = 'none';
-                    }
-                }
-            });
-
-            // Basic sorting functionality (can be improved with advanced sorting logic)
-            const sortLinks = document.querySelectorAll('[data-sort]');
-            sortLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const column = this.getAttribute('data-sort');
-                    sortTable(column);
+                const rows = document.querySelectorAll('#comboOrdersTable tbody tr');
+                rows.forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(searchValue) ? '' : 'none';
                 });
             });
 
-            function sortTable(column) {
-                // Implement sorting logic here based on the column
-                console.log('Sorting by ' + column);
-                // This would be implemented with more advanced logic in a production environment
-            }
+            document.getElementById('filterStatus').addEventListener('change', function () {
+                const filterValue = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#comboOrdersTable tbody tr');
+                rows.forEach(row => {
+                    const statusCell = row.cells[5];
+                    row.style.display = filterValue === '' || statusCell.textContent.toLowerCase().includes(filterValue) ? '' : 'none';
+                });
+            });
 
-            // Export button (placeholder)
-            document.getElementById('exportButton').addEventListener('click', function() {
-                alert('Export functionality would be implemented here!');
-                // In a real implementation, this would generate CSV/Excel file for download
+            document.querySelectorAll('[data-sort]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const column = this.getAttribute('data-sort');
+                    console.log('Sorting by', column);
+                });
+            });
+
+            document.getElementById('exportButton').addEventListener('click', function () {
+                const toast = new bootstrap.Toast(document.getElementById('exportToast'));
+                toast.show();
             });
         });
     </script>
