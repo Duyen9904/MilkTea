@@ -113,10 +113,10 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 Status = "Pending",
                 PaymentStatus = "Pending",
                 PaymentMethod = "Cash",
-                DeliveryAddress = "",
+                DeliveryAddress = "Table 01",
                 Subtotal = 0,
                 Tax = 0,
-                DeliveryFee = 15000, // Default delivery fee
+                DeliveryFee = 0, // Default delivery fee
                 TotalAmount = 0
             };
         }
@@ -507,7 +507,7 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 ProductSizeId = selectedProductSizeId,
                 ProductSize = productSize, // For display purposes
                 Quantity = quantity,
-                UnitPrice = productSize.Price,
+                UnitPrice = itemSubtotal / quantity,
                 Subtotal = itemSubtotal,
                 SpecialInstructions = string.IsNullOrWhiteSpace(specialInstructions) ? null : specialInstructions,
                 OrderItemToppings = new List<OrderItemTopping>()
@@ -556,10 +556,9 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 currentOrder.Tax = currentOrder.Subtotal * 0.1m;
 
                 // Delivery fee is set to default (15,000 VND) or could be calculated based on distance
-                if (currentOrder.DeliveryFee <= 0)
-                {
-                    currentOrder.DeliveryFee = 15000;
-                }
+                
+                currentOrder.DeliveryFee = 0;
+                
 
                 // Calculate total amount
                 currentOrder.TotalAmount = currentOrder.Subtotal + currentOrder.Tax + currentOrder.DeliveryFee;
@@ -611,10 +610,10 @@ namespace PRN222.Assignment.Blazor.Client.Components.Pages
                 Status = "Pending",
                 PaymentStatus = "Pending",
                 PaymentMethod = "Cash",
-                DeliveryAddress = "",
+                DeliveryAddress = "Room 01",
                 Subtotal = 0,
                 Tax = 0,
-                DeliveryFee = 15000,
+                DeliveryFee = 0,
                 TotalAmount = 0
             };
         }

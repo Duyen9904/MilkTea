@@ -174,30 +174,25 @@ namespace PRN222.Assignment.Services.Implementations
 
             var order = orders.FirstOrDefault();
 
-            if (order != null)
+            // In ClientOrderService.cs, modify the GetOrderWithDetailsAsync method:
+            if (order != null && order.OrderItems != null)
             {
-                // Load order items with product size details
                 foreach (var item in order.OrderItems)
                 {
-                    // Load product size with product and size details
+                    // Properly load the complete ProductSize with its associations
                     var productSizes = await _unitOfWork.ProductSizes.GetAllAsync(
                         filter: ps => ps.ProductSizeId == item.ProductSizeId,
                         includes: [ps => ps.Product, ps => ps.Size]);
 
                     item.ProductSize = productSizes.FirstOrDefault();
 
-                    // Load toppings for each order item
-                    var toppings = await _unitOfWork.OrderItemsToppings.GetAllAsync(
+                    // IMPORTANT: Create a new collection instead of adding to existing
+                    // Load toppings and assign directly as a new collection
+                    item.OrderItemToppings = (await _unitOfWork.OrderItemsToppings.GetAllAsync(
                         filter: t => t.OrderItemId == item.OrderItemId,
-                        includes: t => t.Topping);
-
-                    foreach (var topping in toppings)
-                    {
-                        item.OrderItemToppings.Add(topping);
-                    }
+                        includes: t => t.Topping)).ToList();
                 }
             }
-
             return order;
         }
 
