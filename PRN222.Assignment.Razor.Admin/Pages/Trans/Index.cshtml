@@ -10,6 +10,7 @@
 <p>
     <a asp-page="Create" class="btn btn-primary">Create New</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -26,10 +27,10 @@
                 @Html.DisplayNameFor(model => model.Transaction[0].TransactionDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Transaction[0].Order)
+                Order ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Transaction[0].ProcessedByNavigation)
+                Processed By
             </th>
             <th></th>
         </tr>
@@ -51,10 +52,24 @@
                     @Html.DisplayFor(modelItem => item.TransactionDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Order.DeliveryAddress) 
+                    @if (item.Order != null)
+                    {
+                        <span>@item.Order.OrderId</span>  <!-- Display Order ID -->
+                    }
+                    else
+                    {
+                        <span>No Order</span>  <!-- If no Order associated -->
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProcessedByNavigation.FullName)
+                    @if (item.ProcessedByNavigation != null)
+                    {
+                        <span>@item.ProcessedByNavigation.FullName</span>  <!-- Show full name of Account -->
+                    }
+                    else
+                    {
+                        <span>Unknown</span>
+                    }
                 </td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.TransactionId" class="btn btn-primary">Edit</a> |

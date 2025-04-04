@@ -23,7 +23,7 @@ public partial class MilkTeaProduct
 
     public DateTime LastModified { get; set; }
 
-    public virtual Category Category { get; set; } = null!;
+    public virtual Category? Category { get; set; } = null!;
 
     public virtual ICollection<ProductSize> ProductSizes { get; set; } = new List<ProductSize>();
 }

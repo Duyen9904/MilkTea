@@ -31,13 +31,12 @@ namespace PRN222.Assignment.Services.Implementations
         }
 
         public async Task<IEnumerable<Transaction>> GetAllAsync(
-            Expression<Func<Transaction, bool>> filter = null,
-            Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>> orderBy = null,
-            int? pageIndex = null,
-            int? pageSize = null,
-            params Expression<Func<Transaction, object>>[] includes)
+    Expression<Func<Transaction, bool>> filter = null,
+    Func<IQueryable<Transaction>, IOrderedQueryable<Transaction>> orderBy = null,
+    int? pageIndex = null,
+    int? pageSize = null,
+    params Expression<Func<Transaction, object>>[] includes)
         {
-            // Adapt the 'includes' pattern from GetMilkTeaProductByIdAsync
             return await _unitOfWork.Transactions.GetAllAsync(
                 filter: filter,
                 orderBy: orderBy,
@@ -45,11 +44,15 @@ namespace PRN222.Assignment.Services.Implementations
                 pageSize: pageSize,
                 includes: new Expression<Func<Transaction, object>>[]
                 {
-                    t => t.Order,
-                    t => t.ProcessedByNavigation
+            t => t.Order, // Include the Order entity
+            t => t.Order.Account, // Include the Account related to the Order
+            t => t.Order.OrderItems, // Include related OrderItems
+            t => t.Order.OrderCombos, // Include related OrderCombos
+            t => t.ProcessedByNavigation // Include the Account that processed the transaction
                 }
             );
         }
+
 
         public Transaction GetById(int id)
         {

@@ -25,7 +25,7 @@ namespace PRN222.Assignment.Razor.Admin.Components.Milktea
         public async Task OnGetAsync()
         {
             // Fetching the milk tea products using the service asynchronously
-            MilkTeaProduct = (await _milkTeaProductService.GetAllAsync()).ToList();
+            MilkTeaProduct = (await _milkTeaProductService.GetMilkTeaProductsWithCategoryAsync()).ToList();
         }
     }
 }
