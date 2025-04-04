@@ -16,11 +16,5 @@ namespace PRN222.Assignment.Services.Implementations
         {
             _client = new Supabase.Client("https://nzwbqkclgdzqndmpthlq.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Jxa2NsZ2R6cW5kbXB0aGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3Mjc3NjQsImV4cCI6MjA1OTMwMzc2NH0.I9TgNvKfIOO_UPVCdEOFnddvFPjRXwtso1fD6dbV9Bc");
         }
-
-        public async Task<List<Product>> GetProductsAsync()
-        {
-            var products = await _client.Table<Product>("products").Get();
-            return products.Models.ToList();
-        }
     }
 }
