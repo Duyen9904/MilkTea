@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PRN222.Assignment.MVC.Manager</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PRN222.Assignment.MVC.Manager.styles.css" asp-append-version="true" />
+    <style>
+        /* Custom sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+
+        .sidebar-sticky {
+            height: calc(100vh - 48px);
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: #333;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .sidebar .nav-link:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+
+            .sidebar .nav-link.active {
+                color: #007bff;
+            }
+
+            .sidebar .nav-link i {
+                margin-right: 10px;
+                font-size: 1.1rem;
+            }
+
+        .sidebar-heading {
+            font-size: .75rem;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .sidebar-divider {
+            border-top: 1px solid rgba(0, 0, 0, .1);
+            margin: 0.5rem 1rem;
+        }
+
+        .navbar-brand {
+            padding-top: .75rem;
+            padding-bottom: .75rem;
+            font-size: 1rem;
+            background-color: rgba(0, 0, 0, .25);
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+        }
+
+        .navbar .navbar-toggler {
+            top: .25rem;
+            right: 1rem;
+        }
+
+        .submenu {
+            padding-left: 2rem;
+        }
+
+        /* Main content padding */
+        main {
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">MT Manager</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="w-100"></div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" asp-area="" asp-controller="Account" asp-action="Logout">Sign out</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Dashboard" ? "active" : "")"
+                               asp-area="" asp-controller="Dashboard" asp-action="Index">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Transaction" ? "active" : "")"
+                               asp-area="" asp-controller="Transaction" asp-action="Index">
+                                <i class="bi bi-cash-coin"></i> Transactions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Order" ? "active" : "")"
+                               asp-area="" asp-controller="Order" asp-action="Index">
+                                <i class="bi bi-cart3"></i> Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "MilkTeaProduct" ? "active" : "")"
+                               asp-area="" asp-controller="MilkTeaProduct" asp-action="Index">
+                                <i class="bi bi-cup-hot"></i> MilkTea Products
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-divider"></div>
+
+                    <!-- Management Section -->
+                    <h6 class="sidebar-heading">MANAGEMENT</h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Category" ? "active" : "")"
+                               asp-area="" asp-controller="Category" asp-action="Index">
+                                <i class="bi bi-tag"></i> Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Inventory" ? "active" : "")"
+                               asp-area="" asp-controller="Inventory" asp-action="Index">
+                                <i class="bi bi-box"></i> Inventory
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Report" ? "active" : "")"
+                               asp-area="" asp-controller="Report" asp-action="Index">
+                                <i class="bi bi-graph-up"></i> Reports
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-divider"></div>
+
+                    <!-- Settings Section -->
+                    <h6 class="sidebar-heading">SETTINGS</h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "User" ? "active" : "")"
+                               asp-area="" asp-controller="User" asp-action="Index">
+                                <i class="bi bi-people"></i> User Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Setting" ? "active" : "")"
+                               asp-area="" asp-controller="Setting" asp-action="Index">
+                                <i class="bi bi-gear"></i> System Settings
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="sidebar-divider"></div>
+
+                    <!-- Version Info -->
+                    <div class="px-3 mt-4 mb-3 text-muted text-center">
+                        <small>PRN222 Assignment v1.0</small>
+                    </div>
+                </div>
+            </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - PRN222.Assignment.MVC.Manager - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Toggle submenu visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggleButtons = document.querySelectorAll('.menu-toggle');
+
+            menuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const submenu = this.nextElementSibling;
+                    submenu.classList.toggle('d-none');
+
+                    // Toggle the icon
+                    const icon = this.querySelector('.toggle-icon');
+                    if (icon.classList.contains('bi-chevron-down')) {
+                        icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
+                    } else {
+                        icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
+                    }
+                });
+            });
+
+            // Highlight active menu item based on URL path
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.nav-link');
+
+            menuLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && currentPath.includes(href) && href !== '/') {
+                    link.classList.add('active');
+
+                    // If it's a submenu item, also show its parent
+                    if (link.closest('.submenu')) {
+                        const parentMenu = link.closest('.submenu').previousElementSibling;
+                        parentMenu.classList.add('active');
+                        link.closest('.submenu').classList.remove('d-none');
+
+                        // Update toggle icon
+                        const toggleIcon = parentMenu.querySelector('.toggle-icon');
+                        if (toggleIcon) {
+                            toggleIcon.classList.replace('bi-chevron-down', 'bi-chevron-up');
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

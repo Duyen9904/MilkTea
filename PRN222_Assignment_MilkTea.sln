@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRN222.Assignment.Razor.Adm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRN222.Assignment.Blazor.Client", "PRN222.Assignment.Blazor.Client\PRN222.Assignment.Blazor.Client.csproj", "{DEEC33AB-10AB-412A-B833-E6DFF0E2989D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRN222.Assignment.MVC.Manager", "PRN222.Assignment.MVC.Manager\PRN222.Assignment.MVC.Manager.csproj", "{6526D018-A73B-4F5D-9AAE-86AEDE62E830}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DEEC33AB-10AB-412A-B833-E6DFF0E2989D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEEC33AB-10AB-412A-B833-E6DFF0E2989D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEEC33AB-10AB-412A-B833-E6DFF0E2989D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6526D018-A73B-4F5D-9AAE-86AEDE62E830}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6526D018-A73B-4F5D-9AAE-86AEDE62E830}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6526D018-A73B-4F5D-9AAE-86AEDE62E830}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6526D018-A73B-4F5D-9AAE-86AEDE62E830}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
