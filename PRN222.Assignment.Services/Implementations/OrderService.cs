@@ -41,6 +41,44 @@ namespace PRN222.Assignment.Services.Implementations
             return orders.ToList();
         }
 
+        // OrderService.cs (implementation)
+        public async Task<IEnumerable<Order>> GetAllOrdersPagination(
+            Expression<Func<Order, bool>> filter = null,
+            Func<IQueryable<Order>, IOrderedQueryable<Order>> orderBy = null,
+            int? pageIndex = null,
+            int? pageSize = null)
+        {
+            var orders = await _unitOfWork.Orders.GetAllAsync(
+                filter: filter,
+                orderBy: orderBy,
+                pageIndex: pageIndex,
+                pageSize: pageSize,
+                o => o.Account,
+                o => o.ProcessedByNavigation,
+                o => o.OrderItems,
+                o => o.OrderCombos
+            );
+
+            // Apply any additional in-memory filtering if needed
+            foreach (var order in orders)
+            {
+                if (order.OrderItems != null)
+                {
+                    order.OrderItems = order.OrderItems.Where(oi => oi.Quantity > 0).ToList();
+                }
+            }
+
+            return orders;
+        }
+
+        public async Task<int> GetOrdersCount(Expression<Func<Order, bool>> filter = null)
+        {
+            // If you have a Count method in your repository, use it
+            // Otherwise, get all and count in memory
+            var orders = await _unitOfWork.Orders.GetAllAsync(filter: filter);
+            return orders.Count();
+        }
+
         public async Task<Order> CreateOrderAsync(Order order)
         {
             if (order == null)
