@@ -243,18 +243,11 @@
                             <ul class="dropdown-menu" aria-labelledby="productsDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-page="/Milktea/Index">All Products</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-page="/Milktea/Create">Add New</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" asp-area="" asp-page="/Categories/Index">Categories</a></li>
                             </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/ComboOrder/Index">
                                 <i class="fas fa-shopping-cart me-1"></i> Orders
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Report/Index">
-                                <i class="fas fa-file-alt me-1"></i> Reports
                             </a>
                         </li>
                     </ul>
@@ -267,9 +260,9 @@
                                     <span>@User.Identity.Name</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                                    <li><hr class="dropdown-divider"></li>
+                                    @* <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li> *@
+                                    @* <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li> *@
+                                    @* <li><hr class="dropdown-divider"></li> *@
                                     <li>
                                         <form method="post" asp-page="/Login" asp-page-handler="Logout">
                                             <button type="submit" class="dropdown-item text-danger">
