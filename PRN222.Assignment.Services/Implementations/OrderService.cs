@@ -23,21 +23,15 @@ namespace PRN222.Assignment.Services.Implementations
         public async Task<List<Order>> GetAllOrders()
         {
             var orders = await _unitOfWork.Orders.GetAllAsync(
-                filter: o => o.OrderDate >= DateTime.UtcNow.AddDays(-7), // Lọc đơn hàng trong 7 ngày gần nhất
-                orderBy: null, // Không sắp xếp
-                pageIndex: 1, // Trang đầu tiên
-                pageSize: 10, // Lấy 3 đơn hàng mỗi trang,
-                o => o.Account,
-                o => o.OrderCombos,
-                o => o.OrderCombos.Select(oc => oc.Combo),
-                o => o.OrderItems,
-                o => o.OrderItems.Select(oi => oi.ProductSize),
-                o => o.OrderItems.Select(oi => oi.OrderItemToppings),
-                o => o.OrderItems.Select(oi => oi.OrderItemToppings.Select(oit => oit.Topping))
-            );
+        filter: o => o.OrderDate >= DateTime.UtcNow.AddDays(-7),
+        orderBy: null,
+        pageIndex: 1,
+        pageSize: 10
+    );
 
             return orders.ToList();
         }
+
 
         public async Task<Order> CreateOrderAsync(Order order)
         {

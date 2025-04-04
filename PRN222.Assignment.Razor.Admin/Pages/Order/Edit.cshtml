@@ -1,0 +1,84 @@
+﻿@page
+@model PRN222.Assignment.Razor.Admin.Pages.Order.EditModel
+
+<h4>Order</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Order.OrderId" />
+            <div class="form-group">
+                <label asp-for="Order.AccountId" class="control-label"></label>
+                <select asp-for="Order.AccountId" class="form-control" asp-items="ViewBag.AccountId"></select>
+                <span asp-validation-for="Order.AccountId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.OrderDate" class="control-label"></label>
+                <input asp-for="Order.OrderDate" class="form-control" />
+                <span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.Subtotal" class="control-label"></label>
+                <input asp-for="Order.Subtotal" class="form-control" />
+                <span asp-validation-for="Order.Subtotal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.Tax" class="control-label"></label>
+                <input asp-for="Order.Tax" class="form-control" />
+                <span asp-validation-for="Order.Tax" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.DeliveryFee" class="control-label"></label>
+                <input asp-for="Order.DeliveryFee" class="form-control" />
+                <span asp-validation-for="Order.DeliveryFee" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.TotalAmount" class="control-label"></label>
+                <input asp-for="Order.TotalAmount" class="form-control" />
+                <span asp-validation-for="Order.TotalAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.Status" class="control-label"></label>
+                <input asp-for="Order.Status" class="form-control" />
+                <span asp-validation-for="Order.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.PaymentMethod" class="control-label"></label>
+                <input asp-for="Order.PaymentMethod" class="form-control" />
+                <span asp-validation-for="Order.PaymentMethod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.PaymentStatus" class="control-label"></label>
+                <input asp-for="Order.PaymentStatus" class="form-control" />
+                <span asp-validation-for="Order.PaymentStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.DeliveryAddress" class="control-label"></label>
+                <input asp-for="Order.DeliveryAddress" class="form-control" />
+                <span asp-validation-for="Order.DeliveryAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.Notes" class="control-label"></label>
+                <input asp-for="Order.Notes" class="form-control" />
+                <span asp-validation-for="Order.Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Order.ProcessedBy" class="control-label"></label>
+                <select asp-for="Order.ProcessedBy" class="form-control" asp-items="ViewBag.ProcessedBy"></select>
+                <span asp-validation-for="Order.ProcessedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
